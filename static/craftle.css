@@ -1,0 +1,17 @@
+#crafting-table {
+	background: url("/img/crafting_table_ui.png");
+	width: 352px;
+	height: 332px;
+}
+
+#ingredients {
+
+}
+
+.ingredient {
+	background-size: 100% 100%;
+	image-rendering: pixelated;
+	width: 32px;
+	height: 32px;
+	display: inline-block;
+}
