@@ -4,6 +4,22 @@
 	height: 332px;
 }
 
+#crafting-input {
+	position: absolute;
+	top: 42px;
+	left: 68px;
+}
+
+#crafting-output {
+	position: absolute;
+	top: 77px;
+	left: 256px;
+}
+
+.crafting-input-row {
+	height: 35px;
+}
+
 #ingredients {
 
 }
@@ -14,4 +30,9 @@
 	width: 32px;
 	height: 32px;
 	display: inline-block;
+	/* background-color: aqua; */
+}
+
+.ingredient:hover {
+	background-color: lightgray;
 }
