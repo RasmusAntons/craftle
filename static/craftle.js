@@ -20,6 +20,22 @@ const ingredientsMap = {
 	]
 }
 
+function mulberry32(a) {
+    return function() {
+		let t = a += 0x6D2B79F5;
+		t = Math.imul(t ^ t >>> 15, t | 1);
+		t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+		return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+}
+
+function initDaily() {
+	const today = new Date();
+	const dayNumber = (today.getFullYear() - 2000) * 365 + today.getMonth() * 12 + (today.getDate() - 1);
+	const rng = mulberry32(dayNumber);
+	targetRecipe = recipes[Math.floor(rng() * recipes.length)];
+}
+
 function initRandom() {
 	targetRecipe = recipes[Math.floor(Math.random() * recipes.length)];
 }
@@ -193,6 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		ingredients = Array.from(ingredients).sort();
 		initIngredients();
 		initCraftingTable();
+		initDaily();
 		document.getElementById('start-random').addEventListener('click', initRandom);
 	});
 });
