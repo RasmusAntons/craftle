@@ -4,6 +4,21 @@ let ingredients;
 let selectedIngredient = null;
 let craftingInputs;
 let craftingOutput;
+let attempts;
+const MAX_ATTEMPTS = 27;
+
+const ingredientsMap = {
+	'minecraft:planks': [
+		{item: 'minecraft:acacia_planks'},
+		{item: 'minecraft:birch_planks'},
+		{item: 'minecraft:crimson_planks'},
+		{item: 'minecraft:dark_oak_planks'},
+		{item: 'minecraft:jungle_planks'},
+		{item: 'minecraft:oak_planks'},
+		{item: 'minecraft:spruce_planks'},
+		{item: 'minecraft:warped_planks'},
+	]
+}
 
 function initRandom() {
 	targetRecipe = recipes[Math.floor(Math.random() * recipes.length)];
@@ -28,6 +43,7 @@ function initIngredients() {
 function initCraftingTable() {
 	craftingInputs = new Array(9).fill(null);
 	craftingOutput = null;
+	attempts = 0;
 	for (let [i, ingredientInput] of Object.entries(document.querySelectorAll('#crafting-input .ingredient'))) {
 		ingredientInput.addEventListener('click', () => {
 			craftingInputs[i] = selectedIngredient;
@@ -40,6 +56,24 @@ function initCraftingTable() {
 			selectedIngredient = null;
 			updateCraftingOutput();
 		});
+	}
+	const craftingOutputDiv = document.getElementById('crafting-output');
+	craftingOutputDiv.addEventListener('click', () => {
+		if (craftingOutput !== null) {
+			let ingredientId = craftingOutput.replace(':', '/');
+			const inventoryDiv = document.querySelectorAll('#crafting-inventory .ingredient')[attempts];
+			inventoryDiv.style.backgroundImage = `url("/img/${ingredientId}.png")`;
+			handleCraftingAttempt();
+		}
+	});
+}
+
+function handleCraftingAttempt() {
+	++attempts;
+	if (checkExactRecipe(targetRecipe)) {
+		alert('success');
+	} else if (attempts === MAX_ATTEMPTS) {
+		alert('fail');
 	}
 }
 
@@ -57,34 +91,81 @@ function updateCraftingOutput() {
 	craftingOutputDiv.style.backgroundImage = '';
 }
 
-function checkExactRecipe(recipe) {
-	if (recipe.type === 'minecraft:crafting_shapeless') {
-		const remainingInputs = [...craftingInputs];
-		for (let recipeIngredient of recipe.ingredients) {
-			if (Array.isArray(recipeIngredient)) {
-				let found = false;
-				for (let ingredientChoice of recipeIngredient) {
-					if (remainingInputs.includes(ingredientChoice.tag || ingredientChoice.item)) {
-						remainingInputs[remainingInputs.indexOf(ingredientChoice.tag || ingredientChoice.item)] = null;
-						found = true;
+function checkExactShapelessRecipe(recipe) {
+	const remainingInputs = [...craftingInputs];
+	for (let ingredientChoices of recipe.ingredients) {
+		if (!Array.isArray(ingredientChoices))
+			ingredientChoices = [ingredientChoices];
+		let found = false;
+		for (let ingredientChoice of ingredientChoices) {
+			if (remainingInputs.includes(ingredientChoice.tag || ingredientChoice.item)) {
+				remainingInputs[remainingInputs.indexOf(ingredientChoice.tag || ingredientChoice.item)] = null;
+				found = true;
+				break;
+			}
+		}
+		if (!found)
+			return false;
+	}
+	for (let remainingInput of remainingInputs)
+		if (remainingInput !== null)
+			return false;
+	return true;
+}
+
+function flattenCraftingPattern(pattern, rowOffset, colOffset) {
+	const res = new Array(9).fill(null);
+	for (let [rowNumber, row] of pattern.entries()) {
+		for (let [colNumber, key] of row.split('').entries()) {
+			res[(rowNumber + rowOffset) * 3 + colNumber + colOffset] = (key !== ' ') ? key : null;
+		}
+	}
+	return res;
+}
+
+function checkExactShapedRecipe(recipe) {
+	let nRows = recipe.pattern.length;
+	let nCols = Math.max(...recipe.pattern.map(e => e.length));
+	for (let rowOffset = 0; rowOffset < (4 - nRows); ++rowOffset) {
+		for (let colOffset = 0; colOffset < (4 - nCols); ++colOffset) {
+			let correct = true;
+			const flatPattern = flattenCraftingPattern(recipe.pattern, rowOffset, colOffset);
+			for (let i = 0; i < 9; ++i) {
+				if ((flatPattern[i] === null) !== (craftingInputs[i] === null)) {
+					correct = false;
+					break;
+				}
+				if (flatPattern[i] !== null) {
+					let ingredientChoices = recipe.key[flatPattern[i]];
+					if ((ingredientChoices.tag || ingredientChoices.item) in ingredientsMap)
+						ingredientChoices = ingredientsMap[(ingredientChoices.tag || ingredientChoices.item)];
+					if (!Array.isArray(ingredientChoices))
+						ingredientChoices = [ingredientChoices];
+					let found = false;
+					for (let ingredientChoice of ingredientChoices) {
+						if (craftingInputs[i] === (ingredientChoice.tag || ingredientChoice.item)) {
+							found = true;
+							break;
+						}
+					}
+					if (!found) {
+						correct = false;
 						break;
 					}
 				}
-				if (!found)
-					return false;
-			} else {
-				if (remainingInputs.includes(recipeIngredient.tag || recipeIngredient.item)) {
-					remainingInputs[remainingInputs.indexOf(recipeIngredient.tag || recipeIngredient.item)] = null;
-				} else {
-					return false;
-				}
 			}
+			if (correct)
+				return true;
 		}
-		for (let remainingInput of remainingInputs)
-			if (remainingInput !== null)
-				return false;
-		return true;
 	}
+	return false;
+}
+
+function checkExactRecipe(recipe) {
+	if (recipe.type === 'minecraft:crafting_shapeless')
+		return checkExactShapelessRecipe(recipe);
+	if (recipe.type === 'minecraft:crafting_shaped')
+		return checkExactShapedRecipe(recipe);
 	return false;
 }
 

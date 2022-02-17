@@ -1,5 +1,6 @@
 #crafting-table {
 	background: url("/img/crafting_table_ui.png");
+	image-rendering: pixelated;
 	width: 352px;
 	height: 332px;
 }
@@ -16,12 +17,23 @@
 	left: 256px;
 }
 
+#crafting-inventory {
+	position: absolute;
+	top: 176px;
+	left: 24px;
+	font-size: 0;
+}
+
+.crafting-inventory-row {
+	height: 36px;
+}
+
 .crafting-input-row {
-	height: 35px;
+	height: 36px;
 }
 
 #ingredients {
-
+	font-size: 0;
 }
 
 .ingredient {
@@ -29,6 +41,7 @@
 	image-rendering: pixelated;
 	width: 32px;
 	height: 32px;
+	margin-right: 4px;
 	display: inline-block;
 	/* background-color: aqua; */
 }
