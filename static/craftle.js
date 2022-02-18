@@ -1,4 +1,5 @@
 let recipes;
+let tags;
 let targetRecipe;
 let ingredients;
 let selectedIngredient = null;
@@ -6,19 +7,6 @@ let craftingInputs;
 let craftingOutput;
 let attempts;
 const MAX_ATTEMPTS = 27;
-
-const ingredientsMap = {
-	'minecraft:planks': [
-		{item: 'minecraft:acacia_planks'},
-		{item: 'minecraft:birch_planks'},
-		{item: 'minecraft:crimson_planks'},
-		{item: 'minecraft:dark_oak_planks'},
-		{item: 'minecraft:jungle_planks'},
-		{item: 'minecraft:oak_planks'},
-		{item: 'minecraft:spruce_planks'},
-		{item: 'minecraft:warped_planks'},
-	]
-}
 
 function mulberry32(a) {
     return function() {
@@ -110,12 +98,10 @@ function updateCraftingOutput() {
 function checkExactShapelessRecipe(recipe) {
 	const remainingInputs = [...craftingInputs];
 	for (let ingredientChoices of recipe.ingredients) {
-		if (!Array.isArray(ingredientChoices))
-			ingredientChoices = [ingredientChoices];
 		let found = false;
-		for (let ingredientChoice of ingredientChoices) {
-			if (remainingInputs.includes(ingredientChoice.tag || ingredientChoice.item)) {
-				remainingInputs[remainingInputs.indexOf(ingredientChoice.tag || ingredientChoice.item)] = null;
+		for (let ingredientChoice of expandIngredientChoices(ingredientChoices)) {
+			if (remainingInputs.includes(ingredientChoice)) {
+				remainingInputs[remainingInputs.indexOf(ingredientChoice)] = null;
 				found = true;
 				break;
 			}
@@ -127,6 +113,32 @@ function checkExactShapelessRecipe(recipe) {
 		if (remainingInput !== null)
 			return false;
 	return true;
+}
+
+function expandIngredientChoices(ingredientChoices) {
+	let res = [];
+	if (!Array.isArray(ingredientChoices))
+		ingredientChoices = [ingredientChoices];
+	for (let ingredientChoice of ingredientChoices) {
+		if (ingredientChoice.tag)
+			res.push(...tags[ingredientChoice.tag.replace('minecraft:', '')].values);
+		else
+			res.push(ingredientChoice.item);
+	}
+	while (res.some(s => s.startsWith('#'))) {
+		res = res.reduce((r, e) => {
+			if (e.startsWith('#'))
+				r.push(...tags[e.replace('#minecraft:', '')].values);
+			else
+				r.push(e);
+			return r;
+		}, []);
+	}
+	for (let expandedElement of res) {
+		if (expandedElement.startsWith('#'))
+			console.log(ingredientChoices, expandedElement);
+	}
+	return res;
 }
 
 function flattenCraftingPattern(pattern, rowOffset, colOffset) {
@@ -153,18 +165,7 @@ function checkExactShapedRecipe(recipe) {
 				}
 				if (flatPattern[i] !== null) {
 					let ingredientChoices = recipe.key[flatPattern[i]];
-					if ((ingredientChoices.tag || ingredientChoices.item) in ingredientsMap)
-						ingredientChoices = ingredientsMap[(ingredientChoices.tag || ingredientChoices.item)];
-					if (!Array.isArray(ingredientChoices))
-						ingredientChoices = [ingredientChoices];
-					let found = false;
-					for (let ingredientChoice of ingredientChoices) {
-						if (craftingInputs[i] === (ingredientChoice.tag || ingredientChoice.item)) {
-							found = true;
-							break;
-						}
-					}
-					if (!found) {
+					if (!expandIngredientChoices(ingredientChoices).includes(craftingInputs[i])) {
 						correct = false;
 						break;
 					}
@@ -186,9 +187,10 @@ function checkExactRecipe(recipe) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-	fetch('recipes.json').then(r => r.json()).then(r => {
-		recipes = r.filter(e => ['minecraft:crafting_shaped', 'minecraft:crafting_shapeless'].includes(e.type));
-		console.log(recipes);
+	const fetchRecipes = fetch('recipes.json').then(r => r.json()).then(r =>
+		recipes = r.filter(e => ['minecraft:crafting_shaped', 'minecraft:crafting_shapeless'].includes(e.type)));
+	const fetchTags = fetch('tags.json').then(r => r.json()).then(r => tags = r);
+	Promise.all([fetchRecipes, fetchTags]).then(() => {
 		ingredients = new Set();
 		for (let recipe of recipes) {
 			let recipeIngredients;
@@ -196,15 +198,8 @@ document.addEventListener('DOMContentLoaded', () => {
 				recipeIngredients = Object.entries(recipe.key).map(([key, ingredient]) => ingredient);
 			else
 				recipeIngredients = recipe.ingredients;
-			for (let ingredient of recipeIngredients) {
-				if (Array.isArray(ingredient)) {
-					for (let ingredientChoice of ingredient) {
-						ingredients.add(ingredientChoice.tag || ingredientChoice.item);
-					}
-				} else {
-					ingredients.add(ingredient.tag || ingredient.item);
-				}
-			}
+			for (let ingredient of recipeIngredients)
+				ingredients.add(...expandIngredientChoices(ingredient));
 		}
 		ingredients = Array.from(ingredients).sort();
 		initIngredients();

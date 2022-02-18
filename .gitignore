@@ -1,4 +1,5 @@
 /.idea/
 /static/img/minecraft/
 /static/recipes.json
+/static/tags.json
 /venv/

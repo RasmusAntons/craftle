@@ -18,11 +18,7 @@ def is_recipe_json(s):
 
 
 def is_tag_json(s):
-    if s.startswith('data/minecraft/tags/blocks/') and s.endswith('.json'):
-        return True
-    if s.startswith('data/minecraft/tags/items/') and s.endswith('.json'):
-        return True
-    return False
+    return s.startswith('data/minecraft/tags/items/') and s.endswith('.json')
 
 
 if __name__ == '__main__':
