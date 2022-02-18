@@ -36,7 +36,7 @@ function initIngredients() {
 		let ingredientDiv = document.createElement('div');
 		let ingredientId = ingredient.replace(':', '/');
 		ingredientDiv.classList.add('ingredient');
-		ingredientDiv.style.backgroundImage = `url("/img/${ingredientId}.png")`;
+		ingredientDiv.style.backgroundImage = `url("img/${ingredientId}.png")`;
 		ingredientsDiv.appendChild(ingredientDiv);
 		ingredientDiv.addEventListener('click', () => {
 			selectedIngredient = ingredient;
@@ -53,7 +53,7 @@ function initCraftingTable() {
 			craftingInputs[i] = selectedIngredient;
 			if (selectedIngredient) {
 				let ingredientId = selectedIngredient.replace(':', '/');
-				ingredientInput.style.backgroundImage = `url("/img/${ingredientId}.png")`;
+				ingredientInput.style.backgroundImage = `url("img/${ingredientId}.png")`;
 			} else {
 				ingredientInput.style.backgroundImage = '';
 			}
@@ -66,7 +66,7 @@ function initCraftingTable() {
 		if (craftingOutput !== null) {
 			let ingredientId = craftingOutput.replace(':', '/');
 			const inventoryDiv = document.querySelectorAll('#crafting-inventory .ingredient')[attempts];
-			inventoryDiv.style.backgroundImage = `url("/img/${ingredientId}.png")`;
+			inventoryDiv.style.backgroundImage = `url("img/${ingredientId}.png")`;
 			handleCraftingAttempt();
 		}
 	});
@@ -87,7 +87,7 @@ function updateCraftingOutput() {
 		if (checkExactRecipe(recipe)) {
 			craftingOutput = recipe.result.item;
 			let ingredientId = craftingOutput.replace(':', '/');
-			craftingOutputDiv.style.backgroundImage = `url("/img/${ingredientId}.png")`;
+			craftingOutputDiv.style.backgroundImage = `url("img/${ingredientId}.png")`;
 			return;
 		}
 	}
