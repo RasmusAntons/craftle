@@ -198,8 +198,10 @@ document.addEventListener('DOMContentLoaded', () => {
 				recipeIngredients = Object.entries(recipe.key).map(([key, ingredient]) => ingredient);
 			else
 				recipeIngredients = recipe.ingredients;
-			for (let ingredient of recipeIngredients)
-				ingredients.add(...expandIngredientChoices(ingredient));
+			for (let ingredientChoices of recipeIngredients) {
+				for (let ingredientChoice of expandIngredientChoices(ingredientChoices))
+					ingredients.add(ingredientChoice);
+			}
 		}
 		ingredients = Array.from(ingredients).sort();
 		initIngredients();
