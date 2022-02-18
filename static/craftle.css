@@ -38,13 +38,14 @@
 }
 
 .ingredient {
-	background-size: 100% 100%;
 	image-rendering: crisp-edges;
 	image-rendering: pixelated;
 	width: 32px;
 	height: 32px;
 	margin-right: 4px;
 	display: inline-block;
+	background-image: url("img/inv_sprite.png");
+	background-position: -832px -2336px;
 	/* background-color: aqua; */
 }
 

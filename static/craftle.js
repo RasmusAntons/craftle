@@ -1,5 +1,6 @@
 let recipes;
 let tags;
+let items;
 let targetRecipe;
 let ingredients;
 let selectedIngredient = null;
@@ -34,9 +35,8 @@ function initIngredients() {
 		ingredients.removeChild(ingredients.firstChild);
 	for (let ingredient of ingredients) {
 		let ingredientDiv = document.createElement('div');
-		let ingredientId = ingredient.replace(':', '/');
 		ingredientDiv.classList.add('ingredient');
-		ingredientDiv.style.backgroundImage = `url("img/${ingredientId}.png")`;
+		setIngredientInput(ingredientDiv, ingredient);
 		ingredientsDiv.appendChild(ingredientDiv);
 		ingredientDiv.addEventListener('click', () => {
 			selectedIngredient = ingredient;
@@ -51,25 +51,44 @@ function initCraftingTable() {
 	for (let [i, ingredientInput] of Object.entries(document.querySelectorAll('#crafting-input .ingredient'))) {
 		ingredientInput.addEventListener('click', () => {
 			craftingInputs[i] = selectedIngredient;
-			if (selectedIngredient) {
-				let ingredientId = selectedIngredient.replace(':', '/');
-				ingredientInput.style.backgroundImage = `url("img/${ingredientId}.png")`;
-			} else {
-				ingredientInput.style.backgroundImage = '';
-			}
+			setIngredientInput(ingredientInput, selectedIngredient);
 			selectedIngredient = null;
 			updateCraftingOutput();
 		});
+		ingredientInput.style.backgroundPosition = getItemBackgroundPosition('minecraft:air');
 	}
 	const craftingOutputDiv = document.getElementById('crafting-output');
 	craftingOutputDiv.addEventListener('click', () => {
 		if (craftingOutput !== null) {
-			let ingredientId = craftingOutput.replace(':', '/');
 			const inventoryDiv = document.querySelectorAll('#crafting-inventory .ingredient')[attempts];
-			inventoryDiv.style.backgroundImage = `url("img/${ingredientId}.png")`;
+			setIngredientInput(inventoryDiv, craftingOutput);
 			handleCraftingAttempt();
 		}
 	});
+}
+
+function getItemBackgroundPosition(itemId) {
+	const item = items[itemId];
+	if (item === undefined) {
+		alert(`cannot find item ${item}`);
+		return '0 0';
+	}
+	if (!item.position) {
+		console.warn(`missing position for ${itemId}`);
+		return '0 0';
+	}
+	const left = item.position['left'];
+	const top = item.position['top'];
+	return `-${left}px -${top}px`;
+}
+
+function setIngredientInput(ingredientInput, itemId) {
+	if (itemId === 'minecraft:prismarine')
+		ingredientInput.style.backgroundImage = 'url("img/prismarine.gif")';
+	else if (ingredientInput.style.backgroundImage)
+		ingredientInput.style.backgroundImage = '';
+	ingredientInput.style.backgroundPosition = getItemBackgroundPosition(itemId||'minecraft:air');
+	ingredientInput.title = itemId ? items[itemId]['name'] : '';
 }
 
 function handleCraftingAttempt() {
@@ -86,13 +105,12 @@ function updateCraftingOutput() {
 	for (let recipe of recipes) {
 		if (checkExactRecipe(recipe)) {
 			craftingOutput = recipe.result.item;
-			let ingredientId = craftingOutput.replace(':', '/');
-			craftingOutputDiv.style.backgroundImage = `url("img/${ingredientId}.png")`;
+			setIngredientInput(craftingOutputDiv, craftingOutput);
 			return;
 		}
 	}
 	craftingOutput = null;
-	craftingOutputDiv.style.backgroundImage = '';
+	setIngredientInput(craftingOutputDiv, null);
 }
 
 function checkExactShapelessRecipe(recipe) {
@@ -190,7 +208,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	const fetchRecipes = fetch('recipes.json').then(r => r.json()).then(r =>
 		recipes = r.filter(e => ['minecraft:crafting_shaped', 'minecraft:crafting_shapeless'].includes(e.type)));
 	const fetchTags = fetch('tags.json').then(r => r.json()).then(r => tags = r);
-	Promise.all([fetchRecipes, fetchTags]).then(() => {
+	const fetchItems = fetch('items.json').then(r => r.json()).then(r => items = r);
+	Promise.all([fetchRecipes, fetchTags, fetchItems]).then(() => {
 		ingredients = new Set();
 		for (let recipe of recipes) {
 			let recipeIngredients;
