@@ -55,7 +55,6 @@ function initCraftingTable() {
 			selectedIngredient = null;
 			updateCraftingOutput();
 		});
-		ingredientInput.style.backgroundPosition = getItemBackgroundPosition('minecraft:air');
 	}
 	const craftingOutputDiv = document.getElementById('crafting-output');
 	craftingOutputDiv.addEventListener('click', () => {
@@ -67,27 +66,20 @@ function initCraftingTable() {
 	});
 }
 
-function getItemBackgroundPosition(itemId) {
-	const item = items[itemId];
-	if (item === undefined) {
-		alert(`cannot find item ${item}`);
-		return '0 0';
-	}
-	if (!item.position) {
-		console.warn(`missing position for ${itemId}`);
-		return '0 0';
-	}
-	const left = item.position['left'];
-	const top = item.position['top'];
-	return `-${left}px -${top}px`;
-}
-
 function setIngredientInput(ingredientInput, itemId) {
-	if (itemId === 'minecraft:prismarine')
-		ingredientInput.style.backgroundImage = 'url("img/prismarine.gif")';
-	else if (ingredientInput.style.backgroundImage)
+	if (!itemId) {
 		ingredientInput.style.backgroundImage = '';
-	ingredientInput.style.backgroundPosition = getItemBackgroundPosition(itemId||'minecraft:air');
+		return;
+	}
+	if (!items[itemId]) {
+		console.warn(`missing item definition for ${itemId}`)
+		return;
+	}
+	const itemIcon = items[itemId]['icon'];
+	if (itemIcon)
+		ingredientInput.style.backgroundImage = 'url(' + items[itemId]['icon'] + ')';
+	else
+		ingredientInput.style.backgroundImage = '';
 	ingredientInput.title = itemId ? items[itemId]['name'] : '';
 }
 
@@ -221,6 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				for (let ingredientChoice of expandIngredientChoices(ingredientChoices))
 					ingredients.add(ingredientChoice);
 			}
+			ingredients.add(recipe.result.item); // TODO: remove, just for testing
 		}
 		ingredients = Array.from(ingredients).sort();
 		initIngredients();
