@@ -1,8 +1,10 @@
 let recipes;
 let tags;
 let items;
-let targetRecipe;
+let targetItem;
+let targetRecipes;
 let ingredients;
+let craftableItems;
 let selectedIngredient = null;
 let craftingInputs;
 let craftingOutput;
@@ -22,11 +24,13 @@ function initDaily() {
 	const today = new Date();
 	const dayNumber = (today.getFullYear() - 2000) * 365 + today.getMonth() * 12 + (today.getDate() - 1);
 	const rng = mulberry32(dayNumber);
-	targetRecipe = recipes[Math.floor(rng() * recipes.length)];
+	targetItem = craftableItems[Math.floor(rng() * craftableItems.length)];
+	targetRecipes = recipes.filter(r => r.result.item === targetItem);
 }
 
 function initRandom() {
-	targetRecipe = recipes[Math.floor(Math.random() * recipes.length)];
+	targetItem = craftableItems[Math.floor(Math.random() * craftableItems.length)];
+	targetRecipes = recipes.filter(r => r.result.item === targetItem);
 }
 
 function initIngredients() {
@@ -85,7 +89,7 @@ function setIngredientInput(ingredientInput, itemId) {
 
 function handleCraftingAttempt() {
 	++attempts;
-	if (checkExactRecipe(targetRecipe)) {
+	if (targetRecipes.some(checkExactRecipe)) {
 		alert('success');
 	} else if (attempts === MAX_ATTEMPTS) {
 		alert('fail');
@@ -203,6 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const fetchItems = fetch('items.json').then(r => r.json()).then(r => items = r);
 	Promise.all([fetchRecipes, fetchTags, fetchItems]).then(() => {
 		ingredients = new Set();
+		craftableItems = new Set();
 		for (let recipe of recipes) {
 			let recipeIngredients;
 			if (recipe.type === 'minecraft:crafting_shaped')
@@ -214,8 +219,10 @@ document.addEventListener('DOMContentLoaded', () => {
 					ingredients.add(ingredientChoice);
 			}
 			ingredients.add(recipe.result.item); // TODO: remove, just for testing
+			craftableItems.add(recipe.result.item);
 		}
 		ingredients = Array.from(ingredients).sort();
+		craftableItems = Array.from(craftableItems).sort();
 		initIngredients();
 		initCraftingTable();
 		initDaily();

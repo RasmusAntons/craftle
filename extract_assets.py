@@ -29,7 +29,7 @@ icon_force_asset = {
     'minecraft:sugar_cane', 'minecraft:sunflower', 'minecraft:torch', 'minecraft:tripwire_hook', 'minecraft:vine',
     'minecraft:warped_fungus', 'minecraft:white_candle', 'minecraft:white_tulip', 'minecraft:wither_rose',
     'minecraft:yellow_candle', 'minecraft:cake', 'minecraft:azure_bluet', 'minecraft:jungle_door',
-    'minecraft:red_candle', 'warped_door'
+    'minecraft:red_candle', 'minecraft:warped_door'
 }
 
 icon_force_wiki = {
