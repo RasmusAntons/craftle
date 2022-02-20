@@ -109,26 +109,6 @@ function updateCraftingOutput() {
 	setIngredientInput(craftingOutputDiv, null);
 }
 
-function checkExactShapelessRecipe(recipe) {
-	const remainingInputs = [...craftingInputs];
-	for (let ingredientChoices of recipe.ingredients) {
-		let found = false;
-		for (let ingredientChoice of expandIngredientChoices(ingredientChoices)) {
-			if (remainingInputs.includes(ingredientChoice)) {
-				remainingInputs[remainingInputs.indexOf(ingredientChoice)] = null;
-				found = true;
-				break;
-			}
-		}
-		if (!found)
-			return false;
-	}
-	for (let remainingInput of remainingInputs)
-		if (remainingInput !== null)
-			return false;
-	return true;
-}
-
 function expandIngredientChoices(ingredientChoices) {
 	let res = [];
 	if (!Array.isArray(ingredientChoices))
@@ -165,6 +145,26 @@ function flattenCraftingPattern(pattern, rowOffset, colOffset) {
 	return res;
 }
 
+function checkExactShapelessRecipe(recipe) {
+	const remainingInputs = [...craftingInputs];
+	for (let ingredientChoices of recipe.ingredients) {
+		let found = false;
+		for (let ingredientChoice of expandIngredientChoices(ingredientChoices)) {
+			if (remainingInputs.includes(ingredientChoice)) {
+				remainingInputs[remainingInputs.indexOf(ingredientChoice)] = null;
+				found = true;
+				break;
+			}
+		}
+		if (!found)
+			return false;
+	}
+	for (let remainingInput of remainingInputs)
+		if (remainingInput !== null)
+			return false;
+	return true;
+}
+
 function checkExactShapedRecipe(recipe) {
 	let nRows = recipe.pattern.length;
 	let nCols = Math.max(...recipe.pattern.map(e => e.length));
@@ -198,6 +198,23 @@ function checkExactRecipe(recipe) {
 	if (recipe.type === 'minecraft:crafting_shaped')
 		return checkExactShapedRecipe(recipe);
 	return false;
+}
+
+function scoreShapelessRecipe(recipe) {
+
+}
+
+function getCraftingFeedback() {
+	const scoredFeedbackOptions = [];
+	for (let recipe of targetRecipes) {
+		if (recipe.type === 'minecraft:crafting_shapeless') {
+			scoredFeedbackOptions.push(scoreShapelessRecipe(recipe));
+		} else if (recipe.type === 'minecraft:crafting_shaped') {
+			// scoredFeedbackOptions.push(scoreShapelessRecipe(recipe));
+		}
+	}
+	scoredFeedbackOptions.sort((a, b) => a[0] > b[0]);
+	return scoredFeedbackOptions[0];
 }
 
 document.addEventListener('DOMContentLoaded', () => {

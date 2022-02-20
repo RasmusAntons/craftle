@@ -7,6 +7,7 @@ import urllib.error
 import html.parser
 import re
 import base64
+import time
 
 doc_url = 'https://minecraft.fandom.com/wiki/Module:InvSprite'
 wiki_url_base = 'https://minecraft.fandom.com/wiki'
@@ -29,7 +30,13 @@ icon_force_asset = {
     'minecraft:sugar_cane', 'minecraft:sunflower', 'minecraft:torch', 'minecraft:tripwire_hook', 'minecraft:vine',
     'minecraft:warped_fungus', 'minecraft:white_candle', 'minecraft:white_tulip', 'minecraft:wither_rose',
     'minecraft:yellow_candle', 'minecraft:cake', 'minecraft:azure_bluet', 'minecraft:jungle_door',
-    'minecraft:red_candle', 'minecraft:warped_door'
+    'minecraft:red_candle', 'minecraft:warped_door', 'minecraft:allium', 'minecraft:glass_pane',
+    'minecraft:white_stained_glass_pane', 'minecraft:orange_stained_glass_pane', 'minecraft:magenta_stained_glass_pane',
+    'minecraft:light_blue_stained_glass_pane', 'minecraft:yellow_stained_glass_pane',
+    'minecraft:lime_stained_glass_pane', 'minecraft:pink_stained_glass_pane', 'minecraft:gray_stained_glass_pane',
+    'minecraft:light_gray_stained_glass_pane', 'minecraft:cyan_stained_glass_pane',
+    'minecraft:purple_stained_glass_pane', 'minecraft:blue_stained_glass_pane', 'minecraft:brown_stained_glass_pane',
+    'minecraft:green_stained_glass_pane', 'minecraft:red_stained_glass_pane', 'minecraft:black_stained_glass_pane',
 }
 
 icon_force_wiki = {
@@ -42,7 +49,24 @@ icon_asset_overrides = {
     'minecraft:lilac': 'lilac_front',
     'minecraft:peony': 'peony_top',
     'minecraft:rose_bush': 'rose_bush_top',
-    'minecraft:crossbow': 'crossbow_pulling_0'
+    'minecraft:crossbow': 'crossbow_pulling_0',
+    'minecraft:glass_pane': 'minecraft:glass',
+    'minecraft:white_stained_glass_pane': 'white_stained_glass',
+    'minecraft:orange_stained_glass_pane': 'orange_stained_glass',
+    'minecraft:magenta_stained_glass_pane': 'magenta_stained_glass',
+    'minecraft:light_blue_stained_glass_pane': 'light_blue_stained_glass',
+    'minecraft:yellow_stained_glass_pane': 'yellow_stained_glass',
+    'minecraft:lime_stained_glass_pane': 'lime_stained_glass',
+    'minecraft:pink_stained_glass_pane': 'pink_stained_glass',
+    'minecraft:gray_stained_glass_pane': 'gray_stained_glass',
+    'minecraft:light_gray_stained_glass_pane': 'light_gray_stained_glass',
+    'minecraft:cyan_stained_glass_pane': 'cyan_stained_glass',
+    'minecraft:purple_stained_glass_pane': 'purple_stained_glass',
+    'minecraft:blue_stained_glass_pane': 'blue_stained_glass',
+    'minecraft:brown_stained_glass_pane': 'brown_stained_glass',
+    'minecraft:green_stained_glass_pane': 'green_stained_glass',
+    'minecraft:red_stained_glass_pane': 'red_stained_glass',
+    'minecraft:black_stained_glass_pane': 'black_stained_glass',
 }
 
 icon_wiki_overrides = {
@@ -99,20 +123,32 @@ class WikiParser(html.parser.HTMLParser):
         self.div_level = -1
         self.image_ext = None
         self.image_url = None
+        self.image_url_candidates = []
 
-    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+    def feed(self, data):
+        super().feed(data)
+        self.image_url = None
+        for image_url_candidate in self.image_url_candidates:
+            if self.image_url is not None:
+                break
+            for direction in ['U', 'E', 'S']:
+                if f'({direction})' in image_url_candidate:
+                    self.image_url = image_url_candidate
+                    break
+        if self.image_url is None and self.image_url_candidates:
+            self.image_url = self.image_url_candidates[0]
+
+    def handle_starttag(self, tag, attrs):
         if tag == 'div' and 'infobox-imagearea' in dict(attrs).get('class', ''):
             self.in_imagearea = True
             self.div_level = 0
         elif self.in_imagearea and tag == 'img':
             attr_dict = dict(attrs)
             file_name_pattern = rf'{re.escape(self.block_name)}( \(floor\))?( \((UD|N|S|\d+)\))?( [JB]E\d+(-[a-z]\d)?)*.(?P<ext>png|gif)'
-            if self.image_url is None:
-                m = re.match(file_name_pattern, attr_dict.get('alt'))
-                if m:
-                    self.image_ext = m.group('ext')
-                    self.image_url = attr_dict.get('data-src') or attr_dict.get('src')
-                    print(f'found {self.block_name}')
+            m = re.match(file_name_pattern, attr_dict.get('alt'))
+            if m:
+                self.image_ext = m.group('ext')
+                self.image_url_candidates.append(attr_dict.get('data-src') or attr_dict.get('src'))
         elif self.in_imagearea and tag == 'div':
             self.div_level += 1
 
