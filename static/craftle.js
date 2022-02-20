@@ -46,6 +46,8 @@ function initIngredients() {
 		ingredientDiv.dataset.name = items[ingredient].name;
 		ingredientsDiv.appendChild(ingredientDiv);
 		ingredientDiv.addEventListener('mousedown', e => {
+			if (e.button !== 0)
+				return;
 			selectedIngredient = ingredient;
 			setIngredientInput(cursorItemDiv, ingredient);
 			cursorItemDiv.style.left = `${e.clientX - 24}px`;
@@ -68,6 +70,8 @@ function initCraftingTable() {
 	attempts = 0;
 	for (let [i, ingredientInput] of Object.entries(document.querySelectorAll('#crafting-input .ingredient'))) {
 		ingredientInput.addEventListener('mousedown', e => {
+			if (e.button !== 0)
+				return;
 			const previousIngredient = craftingInputs[i];
 			craftingInputs[i] = selectedIngredient;
 			setIngredientInput(ingredientInput, selectedIngredient);
@@ -79,7 +83,9 @@ function initCraftingTable() {
 		});
 	}
 	const craftingOutputDiv = document.getElementById('crafting-output');
-	craftingOutputDiv.addEventListener('mousedown', () => {
+	craftingOutputDiv.addEventListener('mousedown', e => {
+		if (e.button !== 0)
+				return;
 		if (craftingOutput !== null) {
 			const inventoryDiv = document.querySelectorAll('.invslot .ingredient')[attempts];
 			setIngredientInput(inventoryDiv, craftingOutput);
@@ -352,6 +358,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 	document.addEventListener('mousedown', e => {
+		if (e.button !== 0)
+				return;
 		if (e.target === document.body || e.target.id === 'ingredients') {
 			selectedIngredient = null;
 			setIngredientInput(cursorItemDiv, selectedIngredient);
