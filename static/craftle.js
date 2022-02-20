@@ -286,7 +286,7 @@ function scoreShapedRecipe(recipe, rowOffset, colOffset) {
 		}
 		if (matchingIngredientIdx >= 0) {
 			resultColours[inputSlot] = 'yellow';
-			expectedIngredients[inputSlot] = undefined;
+			expectedIngredients[matchingIngredientIdx] = undefined;
 			score += 10;
 		}
 	}
@@ -352,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 	document.addEventListener('mousedown', e => {
-		if (e.target === document.body) {
+		if (e.target === document.body || e.target.id === 'ingredients') {
 			selectedIngredient = null;
 			setIngredientInput(cursorItemDiv, selectedIngredient);
 		}
