@@ -60,12 +60,11 @@ body {
 	scrollbar-width: none;
 	right: 0;
 	top: 0;
-	margin-top: -100px;
 	background-color: rgba(0, 0, 0, 0.45);
 	padding-left: 5px;
 }
 
-#ingredients .ingredient {
+.ingredient {
 	image-rendering: crisp-edges;
 	image-rendering: pixelated;
 	width: 48px;
@@ -78,7 +77,7 @@ body {
 	/* background-color: aqua; */
 }
 
-#ingredients .ingredient:hover {
+.ingredient:hover {
 	background-color: lightgray;
 }
 

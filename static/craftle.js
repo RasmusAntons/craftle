@@ -9,7 +9,8 @@ let selectedIngredient = null;
 let craftingInputs;
 let craftingOutput;
 let attempts;
-const MAX_ATTEMPTS = 27;
+let cursorItemDiv;
+const MAX_ATTEMPTS = 36;
 
 function mulberry32(a) {
     return function() {
@@ -44,8 +45,11 @@ function initIngredients() {
 		ingredientDiv.dataset.id = ingredient;
 		ingredientDiv.dataset.name = items[ingredient].name;
 		ingredientsDiv.appendChild(ingredientDiv);
-		ingredientDiv.addEventListener('click', () => {
+		ingredientDiv.addEventListener('mousedown', e => {
 			selectedIngredient = ingredient;
+			setIngredientInput(cursorItemDiv, ingredient);
+			cursorItemDiv.style.left = `${e.clientX - 24}px`;
+			cursorItemDiv.style.top = `${e.clientY - 24}px`;
 		});
 	}
 	const searchInput = document.querySelector('#search input')
@@ -63,15 +67,19 @@ function initCraftingTable() {
 	craftingOutput = null;
 	attempts = 0;
 	for (let [i, ingredientInput] of Object.entries(document.querySelectorAll('#crafting-input .ingredient'))) {
-		ingredientInput.addEventListener('click', () => {
+		ingredientInput.addEventListener('mousedown', e => {
+			const previousIngredient = craftingInputs[i];
 			craftingInputs[i] = selectedIngredient;
 			setIngredientInput(ingredientInput, selectedIngredient);
-			selectedIngredient = null;
+			selectedIngredient = previousIngredient;
+			cursorItemDiv.style.left = `${e.clientX - 24}px`;
+			cursorItemDiv.style.top = `${e.clientY - 24}px`;
+			setIngredientInput(cursorItemDiv, selectedIngredient);
 			updateCraftingOutput();
 		});
 	}
 	const craftingOutputDiv = document.getElementById('crafting-output');
-	craftingOutputDiv.addEventListener('click', () => {
+	craftingOutputDiv.addEventListener('mousedown', () => {
 		if (craftingOutput !== null) {
 			const inventoryDiv = document.querySelectorAll('.invslot .ingredient')[attempts];
 			setIngredientInput(inventoryDiv, craftingOutput);
@@ -331,5 +339,22 @@ document.addEventListener('DOMContentLoaded', () => {
 		initCraftingTable();
 		initDaily();
 		document.getElementById('start-random').addEventListener('click', initRandom);
+	});
+	cursorItemDiv = document.createElement('div');
+	cursorItemDiv.classList.add('ingredient');
+	cursorItemDiv.style.pointerEvents = 'none';
+	cursorItemDiv.style.position = 'fixed';
+	document.body.appendChild(cursorItemDiv);
+	document.addEventListener('mousemove', e => {
+		if (selectedIngredient) {
+			cursorItemDiv.style.left = `${e.clientX - 24}px`;
+			cursorItemDiv.style.top = `${e.clientY - 24}px`;
+		}
+	});
+	document.addEventListener('mousedown', e => {
+		if (e.target === document.body) {
+			selectedIngredient = null;
+			setIngredientInput(cursorItemDiv, selectedIngredient);
+		}
 	});
 });
