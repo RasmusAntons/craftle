@@ -41,11 +41,21 @@ function initIngredients() {
 		let ingredientDiv = document.createElement('div');
 		ingredientDiv.classList.add('ingredient');
 		setIngredientInput(ingredientDiv, ingredient);
+		ingredientDiv.dataset.id = ingredient;
+		ingredientDiv.dataset.name = items[ingredient].name;
 		ingredientsDiv.appendChild(ingredientDiv);
 		ingredientDiv.addEventListener('click', () => {
 			selectedIngredient = ingredient;
 		});
 	}
+	const searchInput = document.querySelector('#search input')
+	searchInput.value = '';
+	searchInput.oninput = e => {
+		for (let ingredientDiv of document.querySelectorAll('#ingredients .ingredient')) {
+			const hide = (e.target.value && !ingredientDiv.dataset.name.toLowerCase().includes(e.target.value.toLowerCase()));
+			ingredientDiv.style.display = hide ? 'none' : '';
+		}
+	};
 }
 
 function initCraftingTable() {
