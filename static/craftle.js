@@ -97,6 +97,7 @@ function initCraftingTable() {
 function setIngredientInput(ingredientInput, itemId) {
 	if (!itemId) {
 		ingredientInput.style.backgroundImage = '';
+		ingredientInput.title = '';
 		return;
 	}
 	if (!items[itemId]) {
@@ -108,7 +109,7 @@ function setIngredientInput(ingredientInput, itemId) {
 		ingredientInput.style.backgroundImage = 'url(' + items[itemId]['icon'] + ')';
 	else
 		ingredientInput.style.backgroundImage = '';
-	ingredientInput.title = itemId ? items[itemId]['name'] : '';
+	ingredientInput.title = items[itemId]['name'];
 }
 
 function handleCraftingAttempt() {
