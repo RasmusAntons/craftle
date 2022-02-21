@@ -118,12 +118,16 @@ function handleCraftingAttempt() {
 		alert('success');
 	} else if (attempts === MAX_ATTEMPTS) {
 		alert('fail');
-	} else {
-		const craftingFeedback = Recipe.getCraftingFeedback();
-		for (let [i, craftSlot] of Object.entries(document.querySelectorAll('#crafting-input .craftslot'))) {
-			craftSlot.style.backgroundColor = craftingFeedback[i] ? craftingFeedback[i] : '';
-		}
+		return;
 	}
+	const craftingFeedback = Recipe.getCraftingFeedback();
+	const craftingAttemptTemplate = document.getElementById('crafting-attempt-template');
+	const craftingAttemptDiv = craftingAttemptTemplate.content.cloneNode(true);
+	for (let [i, craftSlot] of Object.entries(craftingAttemptDiv.querySelectorAll('.craftslot'))) {
+		craftSlot.style.backgroundColor = craftingFeedback[i] ? craftingFeedback[i] : '';
+		setIngredientIcon(craftSlot.firstChild, craftingInputs[i]);
+	}
+	document.getElementById('attempts').appendChild(craftingAttemptDiv);
 }
 
 function updateCraftingOutput() {
