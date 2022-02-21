@@ -5,6 +5,8 @@
 
 body {
 	background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),url("img/bg.png");
+	background-repeat: no-repeat;
+	background-attachment: fixed;
 	height: 100vh;
 	background-size: cover;
 	background-position: center;
@@ -70,6 +72,7 @@ body {
 	background-color: rgba(0, 0, 0, 0.3);
 	padding-left: 8px;
 	padding-top: 55px;
+	border-left: 2px solid rgba(0, 0, 0, 0.32);;
 }
 
 .ingredient {
@@ -86,21 +89,52 @@ body {
 }
 
 .ingredient:hover {
-	background-color: lightgray;
+	background-color: #9f9f9f;
 }
 
 .mc-button {
+	position: relative;
+	left: calc(50% - 590px);
+	margin-right: 10px;
+	display: inline-block;
+	float: left;
 	box-sizing: border-box;
 	height: 50px;
 	width: 200px;
 	cursor: pointer;
 	overflow: hidden;
-	white-space: nowrap;
-	user-select: none;
 	background: #999 url('img/bg2.png') center / cover;
 	image-rendering: pixelated;
 	border: 2px solid #000;
 	line-height: 45px;
+}
+
+.info {
+	position: relative;
+	color: #fff;
+	left: 10px;
+	margin-right: 10px;
+	display: inline-block;
+	float: left;
+	box-sizing: border-box;
+	height: 50px;
+	width: 350px;
+	overflow: hidden;
+}
+
+#count {
+	float: right;
+	font-size: 22px;
+}
+
+.info a {
+	color: #ffff00;
+	text-decoration: none;
+}
+
+.info a:visited {
+	color: #ffff00;
+	text-decoration: none;
 }
 
 .mc-button:hover .title {
@@ -127,7 +161,7 @@ body {
 
 .crafting-table {
 	float: right;
-	margin-right: 700px;
+	margin-right: calc(50% - 224px);
 	outline: #000 solid 2px; /*1 or 2*/
 	width: 492px;
 	height: 492px;
@@ -274,10 +308,10 @@ h1 {
 
 #logo {
 	float: right;
-	position: relative;
+	position: absolute;
 	width: 492px;
 	top: 666px;
-	right: -515px;
+	margin-left: calc(50% - 260px);
 }
 
 #status {
@@ -335,8 +369,16 @@ h1 {
 	background-color: rgba(0, 0, 0, 0.3);
 	padding-left: 8px;
 	padding-top: 55px;
+	border-right: 2px solid rgba(0, 0, 0, 0.32);
 }
 
 .crafting-attempt { /* don't forget to change this when we have a class */
 	margin-top: 10px;
+}
+
+/* buttons */
+
+#start-random {
+	position: relative;
+	float: left;
 }
