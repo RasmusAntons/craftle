@@ -4,7 +4,10 @@
 }
 
 body {
-	background: url("img/bg.png");
+	background: linear-gradient(
+		rgba(0, 0, 0, 0.5),
+		rgba(0, 0, 0, 0.5)
+	),url("img/bg.png");
 	height: 100vh;
 	background-size: cover;
 	background-position: center;
@@ -52,16 +55,18 @@ body {
 }
 
 #ingredients {
+	box-sizing: border-box;
 	font-size: 0;
-	position: absolute;
-	width: 470px;
-	height: 100%;
+	position: fixed;
+	width: 427px;
+	height: 100vh;
 	overflow-y: scroll;
 	scrollbar-width: none;
 	right: 0;
 	top: 0;
-	background-color: rgba(0, 0, 0, 0.45);
-	padding-left: 5px;
+	background-color: rgba(0, 0, 0, 0.3);
+	padding-left: 8px;
+	padding-top: 55px;
 }
 
 .ingredient {
@@ -132,7 +137,7 @@ body {
 	border-bottom: 5px solid #555;
 	padding-top: 5px;
 	padding-left: 5px;
-	margin-top: 100px;
+	margin-top: 80px;
 	margin-bottom: 10px;
 }
 
@@ -212,7 +217,85 @@ h1 {
 /* search */
 
 #search {
+	display: block;
 	position: absolute;
-	left: 0;
-	top: 100px;
+	right: 0px;
+	top: -8px;
+}
+
+#searchbar {
+	width: 427px;
+	height: 50px;
+	padding: 12px 20px;
+	margin: 8px 0;
+	display: inline-block;
+	border: 1px solid #ccc;
+	border-radius: 1px;
+	box-sizing: border-box;
+	font-family: Minecraft;
+	background-color: #111;
+	color: #ddd;
+	font-size: 16px;
+}
+
+#searchbar:focus {
+	outline: none;
+}
+
+/* nav? */
+
+#main-menu {
+	width: 100%;
+	position: fixed;
+	top: 0;
+	background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* logo */
+
+#logo {
+	float: right;
+	position: relative;
+	width: 492px;
+	top: 666px;
+	right: -515px;
+}
+
+#status {
+	color: #FFFF00;
+	text-shadow:3px 3px #3F3F00;
+	position: absolute;
+}
+.pop {
+	animation: pop 0.58s infinite;
+	-webkit-animation: pop 0.58s infinite;
+}
+@keyframes pop {
+	from {
+		transform:scale(0.95)
+	}
+	50% {
+		transform:scale(1)
+	}
+	to {
+		transform:scale(0.95)
+	}
+}
+@-webkit-keyframes pop {
+	from {
+		-webkit-transform:scale(0.95)
+	}
+	50% {
+		-webkit-transform:scale(1)
+	}
+	to {
+		-webkit-transform:scale(0.95)
+	}
+}
+.tilt {
+	-ms-transform: rotate(-25deg);
+	-webkit-transform: rotate(-25deg);
+	transform: rotate(-25deg);
+	margin-left: 270px;
+	margin-top: -20px;
 }
