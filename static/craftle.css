@@ -72,7 +72,7 @@ body {
 	background-color: rgba(0, 0, 0, 0.3);
 	padding-left: 8px;
 	padding-top: 55px;
-	border-left: 2px solid rgba(0, 0, 0, 0.32);;
+	border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .ingredient {
@@ -94,13 +94,13 @@ body {
 
 .mc-button {
 	position: relative;
-	left: calc(50% - 590px);
+	left: calc(50% - 704px);
 	margin-right: 10px;
 	display: inline-block;
 	float: left;
 	box-sizing: border-box;
 	height: 50px;
-	width: 200px;
+	width: 150px;
 	cursor: pointer;
 	overflow: hidden;
 	background: #999 url('img/bg2.png') center / cover;
@@ -162,7 +162,7 @@ body {
 .crafting-table {
 	float: right;
 	margin-right: calc(50% - 224px);
-	outline: #000 solid 2px; /*1 or 2*/
+	outline: #000 solid 2px;
 	width: 492px;
 	height: 492px;
 	background: #c6c6c6;
@@ -179,7 +179,7 @@ body {
 
 h1 {
 	margin: 10px 10px;
-	font-size: 16px; /*skinnier font?*/
+	font-size: 16px;
 	color: #444;
 }
 
@@ -369,10 +369,10 @@ h1 {
 	background-color: rgba(0, 0, 0, 0.3);
 	padding-left: 8px;
 	padding-top: 55px;
-	border-right: 2px solid rgba(0, 0, 0, 0.32);
+	border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.crafting-attempt { /* don't forget to change this when we have a class */
+.crafting-attempt {
 	margin-top: 10px;
 }
 
