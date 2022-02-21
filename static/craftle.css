@@ -4,10 +4,7 @@
 }
 
 body {
-	background: linear-gradient(
-		rgba(0, 0, 0, 0.5),
-		rgba(0, 0, 0, 0.5)
-	),url("img/bg.png");
+	background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),url("img/bg.png");
 	height: 100vh;
 	background-size: cover;
 	background-position: center;
@@ -15,6 +12,11 @@ body {
 	font-family: Minecraft;
 	margin: 0;
 	padding: 0;
+}
+
+#cursor-item {
+	pointer-events: none;
+	position: fixed;
 }
 
 #crafting-inputing-table {
@@ -34,6 +36,7 @@ body {
 }
 
 #crafting-inputing-output {
+	box-sizing: border-box;
 	position: absolute;
 	top: 77px;
 	left: 256px;
@@ -70,11 +73,11 @@ body {
 }
 
 .ingredient {
+	margin: 2px;
 	image-rendering: crisp-edges;
 	image-rendering: pixelated;
 	width: 48px;
 	height: 48px;
-	margin-right: 4px;
 	display: inline-block;
 	background-size: 100%;
 	background-repeat: no-repeat;
@@ -114,7 +117,6 @@ body {
 	width: 100%; height: 100%;
 	display: flex;
 	justify-content: center;
-	align-ingredients: center;
 	color: #DDD;
 	text-shadow: 2px 2px #000A;
 	box-shadow: inset -2px -4px #0006, inset 2px 2px #FFF7;
@@ -151,7 +153,6 @@ h1 {
 	width: 52px;
 	height: 52px;
 	display: flex;
-	justify-content: center;
 	background: #8b8b8b;
 	box-shadow: inset 1.5px 1.5px 0px rgba(38, 38, 38, 0.8), inset -2px -2px 0px #fff;
 }
@@ -163,10 +164,8 @@ h1 {
 }
 
 .invslot .ingredient {
-	margin: 2px;
 	display: flex;
 	flex-direction: column;
-	align-ingredients: center;
 	width: 48px;
 	height: 48px;
 }
@@ -177,16 +176,18 @@ h1 {
 
 /* craft */
 
-#crafting-input {
+#crafting-input, .crafting-attempt {
 	float: left;
 	margin: 0px 10px 10px 10px;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
 }
 
 .arrow {
 	float: left;
-	padding-left: 42px;
-	padding-right: 49px;
-	padding-top: 47px;
+	padding-left: 60px;
+	padding-right: 31px;
+	padding-top: 40px;
 	vertical-align:top;
 	font-size: 54px;
 	color: #8a8a8a;
@@ -201,7 +202,11 @@ h1 {
 }
 
 #crafting-input .craftslot:nth-child(3n+1){
-	clear:left;
+	clear: left;
+}
+
+.crafting-attempt .craftslot:nth-child(3n+1){
+	clear: left;
 }
 
 #crafting-output {
@@ -212,6 +217,20 @@ h1 {
 	box-shadow: inset 1.5px 1.5px 0px rgba(38, 38, 38, 0.8), inset -2px -2px 0px #fff;
 	width: 157px;
 	height: 157px;
+	border: 40px solid #c6c6c6;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.stack {
+	font-size: 24px;
+	color: #fefefe;
+	position: relative;
+	text-shadow: #333 1px 2px 1px;
+	top: 27px;
+	right: -4px;
+	cursor: default;
+	text-align: right;
 }
 
 /* search */
@@ -298,4 +317,26 @@ h1 {
 	transform: rotate(-25deg);
 	margin-left: 270px;
 	margin-top: -20px;
+}
+
+/* attempts */
+
+#attempts {
+	color: #fff !important;
+	box-sizing: border-box;
+	font-size: 28px;
+	position: fixed;
+	width: 369px;
+	height: 100vh;
+	overflow-y: scroll;
+	scrollbar-width: none;
+	left: 0;
+	top: 0;
+	background-color: rgba(0, 0, 0, 0.3);
+	padding-left: 8px;
+	padding-top: 55px;
+}
+
+.crafting-attempt { /* don't forget to change this when we have a class */
+	margin-top: 10px;
 }

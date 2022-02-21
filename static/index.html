@@ -3,6 +3,7 @@
 <head>
 	<title>CRAFTLE</title>
 	<script src="craftle.js"></script>
+	<script src="recipe.js"></script>
 	<link rel="stylesheet" href="craftle.css">
 	<link rel="preconnect" href="Minecraft.woff">
 </head>
@@ -15,15 +16,15 @@
 
 	<h1>Craft</h1>
 	<div id="crafting-input">
-		<div class="craftslot"><div class="ingredient"></div></div>
-		<div class="craftslot"><div class="ingredient"></div></div>
-		<div class="craftslot"><div class="ingredient"></div></div>
-		<div class="craftslot"><div class="ingredient"></div></div>
-		<div class="craftslot"><div class="ingredient"></div></div>
-		<div class="craftslot"><div class="ingredient"></div></div>
-		<div class="craftslot"><div class="ingredient"></div></div>
-		<div class="craftslot"><div class="ingredient"></div></div>
-		<div class="craftslot"><div class="ingredient"></div></div>
+		<div class="craftslot"><div class="ingredient"><div class="stack"></div></div></div>
+		<div class="craftslot"><div class="ingredient"><div class="stack"></div></div></div>
+		<div class="craftslot"><div class="ingredient"><div class="stack"></div></div></div>
+		<div class="craftslot"><div class="ingredient"><div class="stack"></div></div></div>
+		<div class="craftslot"><div class="ingredient"><div class="stack"></div></div></div>
+		<div class="craftslot"><div class="ingredient"><div class="stack"></div></div></div>
+		<div class="craftslot"><div class="ingredient"><div class="stack"></div></div></div>
+		<div class="craftslot"><div class="ingredient"><div class="stack"></div></div></div>
+		<div class="craftslot"><div class="ingredient"><div class="stack"></div></div></div>
 	</div>
 	<div class="arrow">
 		&#x279D;
@@ -36,37 +37,33 @@
 
 		<h1>Inventory</h1>
 		<div class="slotwrap">
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot">
-			<div class="ingredient">
-				<!-- ingredient image goes here -->
-			</div>
-			</div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
 		</div>
 
 
@@ -76,14 +73,14 @@
 				<!-- ingredient image goes here -->
 			</div>
 			</div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
-			<div class="invslot"><div class="ingredient"></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="invslot"><div class="ingredient"><div class="stack"></div></div></div>
 		</div>
 
 
@@ -97,9 +94,14 @@
 		</div>
 
 	</div>
+
 	<div id="ingredients">
 
 	</div>
+
+	<div id="attempts"></div>
+
+
 	<div id="main-menu">
 		<div class="mc-button">
 			<div class="title" id="start-random">Random</div>
@@ -107,5 +109,20 @@
 		<div id="search">
 			<input id="searchbar" type="text" placeholder="Search">
 		</div>
+
+	<div class="ingredient" id="cursor-item"><div class="stack"></div></div>
+	<template>
+		<div class="crafting-attempt">
+			<div class="craftslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="craftslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="craftslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="craftslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="craftslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="craftslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="craftslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="craftslot"><div class="ingredient"><div class="stack"></div></div></div>
+			<div class="craftslot"><div class="ingredient"><div class="stack"></div></div></div>
+		</div>
+	</template>
 </body>
 </html>
