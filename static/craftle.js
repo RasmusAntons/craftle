@@ -49,14 +49,15 @@ function initIngredients() {
 		ingredientDiv.dataset.name = items[ingredient].name;
 		ingredientsDiv.appendChild(ingredientDiv);
 		ingredientDiv.addEventListener('mousedown', e => {
+			const shift = e.getModifierState('Shift');
 			if (selectedIngredient === null && (e.button === 0 || e.button === 2)) {
 				selectedIngredient = ingredient;
-				setIngredientIcon(cursorItemDiv, ingredient);
+				setIngredientIcon(cursorItemDiv, ingredient, shift ? items[ingredient].stack : 1);
 				cursorItemDiv.style.left = `${e.clientX - 24}px`;
 				cursorItemDiv.style.top = `${e.clientY - 24}px`;
 			} else if (e.button === 0) {
 				if (selectedIngredient === ingredient) {
-					incrementStack(cursorItemDiv, items[ingredient].stack);
+					incrementStack(cursorItemDiv, items[ingredient].stack, shift ? 64 : 1);
 				} else {
 					selectedIngredient = ingredient;
 					setIngredientIcon(cursorItemDiv, ingredient);
