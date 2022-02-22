@@ -41,17 +41,31 @@ function initIngredients() {
 	for (let ingredient of ingredients) {
 		let ingredientDiv = document.createElement('div');
 		ingredientDiv.classList.add('ingredient');
+		const ingredientStack = document.createElement('div');
+		ingredientStack.classList.add('stack');
+		ingredientDiv.appendChild(ingredientStack);
 		setIngredientIcon(ingredientDiv, ingredient);
 		ingredientDiv.dataset.id = ingredient;
 		ingredientDiv.dataset.name = items[ingredient].name;
 		ingredientsDiv.appendChild(ingredientDiv);
 		ingredientDiv.addEventListener('mousedown', e => {
-			if (e.button !== 0)
-				return;
-			selectedIngredient = ingredient;
-			setIngredientIcon(cursorItemDiv, ingredient);
-			cursorItemDiv.style.left = `${e.clientX - 24}px`;
-			cursorItemDiv.style.top = `${e.clientY - 24}px`;
+			if (selectedIngredient === null && (e.button === 0 || e.button === 2)) {
+				selectedIngredient = ingredient;
+				setIngredientIcon(cursorItemDiv, ingredient);
+				cursorItemDiv.style.left = `${e.clientX - 24}px`;
+				cursorItemDiv.style.top = `${e.clientY - 24}px`;
+			} else if (e.button === 0) {
+				if (selectedIngredient === ingredient) {
+					incrementStack(cursorItemDiv, items[ingredient].stack);
+				} else {
+					selectedIngredient = ingredient;
+					setIngredientIcon(cursorItemDiv, ingredient);
+					cursorItemDiv.style.left = `${e.clientX - 24}px`;
+					cursorItemDiv.style.top = `${e.clientY - 24}px`;
+				}
+			} else if (e.button === 2) {
+				decrementStack(cursorItemDiv);
+			}
 		});
 	}
 	const searchInput = document.querySelector('#search input')
@@ -70,16 +84,19 @@ function initCraftingTable() {
 	attempts = 0;
 	for (let [i, ingredientInput] of Object.entries(document.querySelectorAll('#crafting-input .ingredient'))) {
 		ingredientInput.addEventListener('mousedown', e => {
-			if (e.button !== 0)
-				return;
-			const previousIngredient = craftingInputs[i];
-			craftingInputs[i] = selectedIngredient;
-			setIngredientIcon(ingredientInput, selectedIngredient);
-			selectedIngredient = previousIngredient;
-			cursorItemDiv.style.left = `${e.clientX - 24}px`;
-			cursorItemDiv.style.top = `${e.clientY - 24}px`;
-			setIngredientIcon(cursorItemDiv, selectedIngredient);
-			updateCraftingOutput();
+			if (e.button === 0) {
+				const previousIngredient = craftingInputs[i];
+				const previousStack = ingredientInput.firstChild.textContent;
+				craftingInputs[i] = selectedIngredient;
+				setIngredientIcon(ingredientInput, selectedIngredient);
+				ingredientInput.firstChild.textContent = cursorItemDiv.firstChild.textContent;
+				selectedIngredient = previousIngredient;
+				cursorItemDiv.style.left = `${e.clientX - 24}px`;
+				cursorItemDiv.style.top = `${e.clientY - 24}px`;
+				setIngredientIcon(cursorItemDiv, selectedIngredient);
+				cursorItemDiv.firstChild.textContent = previousStack;
+				updateCraftingOutput();
+			}
 		});
 	}
 	const craftingOutputDiv = document.getElementById('crafting-output');
@@ -94,7 +111,8 @@ function initCraftingTable() {
 	});
 }
 
-function setIngredientIcon(ingredientDiv, itemId) {
+function setIngredientIcon(ingredientDiv, itemId, stack) {
+	ingredientDiv.firstChild.textContent = (stack > 1) ? stack.toString() : '';
 	if (!itemId) {
 		ingredientDiv.style.backgroundImage = '';
 		ingredientDiv.title = '';
@@ -110,6 +128,25 @@ function setIngredientIcon(ingredientDiv, itemId) {
 	else
 		ingredientDiv.style.backgroundImage = '';
 	ingredientDiv.title = items[itemId]['name'];
+}
+
+function incrementStack(ingredientDiv, maxStack, amount) {
+	if (amount === undefined)
+		amount = 1;
+	const newStack = Math.min(Number(ingredientDiv.firstChild.textContent || 1) + amount, maxStack);
+	ingredientDiv.firstChild.textContent = (newStack > 1) ? newStack.toString() : '';
+}
+
+function decrementStack(ingredientDiv, amount) {
+	if (amount === undefined)
+		amount = 1;
+	const newStack = Number(cursorItemDiv.firstChild.textContent || 1) - amount;
+	if (newStack > 0) {
+		ingredientDiv.firstChild.textContent = (newStack > 1) ? newStack.toString() : '';
+	} else {
+		selectedIngredient = null;
+		setIngredientIcon(cursorItemDiv, null);
+	}
 }
 
 function handleCraftingAttempt() {
@@ -176,11 +213,18 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 	document.addEventListener('mousedown', e => {
-		if (e.button !== 0)
-			return;
 		if (e.target === document.body || e.target.id === 'ingredients') {
-			selectedIngredient = null;
-			setIngredientIcon(cursorItemDiv, selectedIngredient);
+			if (e.button === 0) {
+				selectedIngredient = null;
+				setIngredientIcon(cursorItemDiv, selectedIngredient);
+			} else if (e.button === 2) {
+				decrementStack(cursorItemDiv);
+			}
 		}
+	});
+	document.addEventListener('contextmenu', e => {
+		const contextEnabled = ['searchbar'];
+		if (!contextEnabled.includes(e.target.id))
+			e.preventDefault();
 	});
 });

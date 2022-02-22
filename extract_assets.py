@@ -92,6 +92,97 @@ icon_wiki_overrides = {
     'Waxed Weathered Cut Copper Stairs': 'Cut Copper Stairs',
 }
 
+max_stack_sizes = {
+    'minecraft:minecart': 1,
+    'minecraft:chest_minecart': 1,
+    'minecraft:furnace_minecart': 1,
+    'minecraft:tnt_minecart': 1,
+    'minecraft:carrot_on_a_stick': 1,
+    'minecraft:warped_fungus_on_a_stick': 1,
+    'minecraft:oak_boat': 1,
+    'minecraft:spruce_boat': 1,
+    'minecraft:birch_boat': 1,
+    'minecraft:jungle_boat': 1,
+    'minecraft:acacia_boat': 1,
+    'minecraft:dark_oak_boat': 1,
+    'minecraft:bucket': 16,
+    'minecraft:snowball': 16,
+    'minecraft:milk_bucket': 1,
+    'minecraft:egg': 16,
+    'minecraft:ender_pearl': 16,
+    'minecraft:writable_book': 1,
+    'minecraft:creeper_banner_pattern': 1,
+    'minecraft:skull_banner_pattern': 1,
+    'minecraft:mojang_banner_pattern': 1,
+    'minecraft:flower_banner_pattern': 1,
+    'minecraft:cake': 1,
+    'minecraft:beetroot_soup': 1,
+    'minecraft:honey_bottle': 16,
+    'minecraft:rabbit_stew': 1,
+    'minecraft:mushroom_stew': 1,
+    'minecraft:spyglass': 1,
+    'minecraft:flint_and_steel': 1,
+    'minecraft:wooden_shovel': 1,
+    'minecraft:wooden_pickaxe': 1,
+    'minecraft:wooden_axe': 1,
+    'minecraft:wooden_hoe': 1,
+    'minecraft:stone_shovel': 1,
+    'minecraft:stone_pickaxe': 1,
+    'minecraft:stone_axe': 1,
+    'minecraft:stone_hoe': 1,
+    'minecraft:golden_shovel': 1,
+    'minecraft:golden_pickaxe': 1,
+    'minecraft:golden_axe': 1,
+    'minecraft:golden_hoe': 1,
+    'minecraft:iron_shovel': 1,
+    'minecraft:iron_pickaxe': 1,
+    'minecraft:iron_axe': 1,
+    'minecraft:iron_hoe': 1,
+    'minecraft:diamond_shovel': 1,
+    'minecraft:diamond_pickaxe': 1,
+    'minecraft:diamond_axe': 1,
+    'minecraft:diamond_hoe': 1,
+    'minecraft:netherite_shovel': 1,
+    'minecraft:netherite_pickaxe': 1,
+    'minecraft:netherite_axe': 1,
+    'minecraft:netherite_hoe': 1,
+    'minecraft:shears': 1,
+    'minecraft:fishing_rod': 1,
+    'minecraft:bow': 1,
+    'minecraft:turtle_helmet': 1,
+    'minecraft:wooden_sword': 1,
+    'minecraft:stone_sword': 1,
+    'minecraft:golden_sword': 1,
+    'minecraft:iron_sword': 1,
+    'minecraft:diamond_sword': 1,
+    'minecraft:netherite_sword': 1,
+    'minecraft:leather_helmet': 1,
+    'minecraft:leather_chestplate': 1,
+    'minecraft:leather_leggings': 1,
+    'minecraft:leather_boots': 1,
+    'minecraft:chainmail_helmet': 1,
+    'minecraft:chainmail_chestplate': 1,
+    'minecraft:chainmail_leggings': 1,
+    'minecraft:chainmail_boots': 1,
+    'minecraft:iron_helmet': 1,
+    'minecraft:iron_chestplate': 1,
+    'minecraft:iron_leggings': 1,
+    'minecraft:iron_boots': 1,
+    'minecraft:diamond_helmet': 1,
+    'minecraft:diamond_chestplate': 1,
+    'minecraft:diamond_leggings': 1,
+    'minecraft:diamond_boots': 1,
+    'minecraft:golden_helmet': 1,
+    'minecraft:golden_chestplate': 1,
+    'minecraft:golden_leggings': 1,
+    'minecraft:golden_boots': 1,
+    'minecraft:netherite_helmet': 1,
+    'minecraft:netherite_chestplate': 1,
+    'minecraft:netherite_leggings': 1,
+    'minecraft:netherite_boots': 1,
+    'minecraft:shulker_box': 1,
+}
+
 
 def is_texture_asset(s):
     if s.startswith('assets/minecraft/textures/item/'):
@@ -266,12 +357,13 @@ if __name__ == '__main__':
     items = {}
     relevant_item_ids = extract_item_ids(recipes, tags)
     for relevant_item_id in relevant_item_ids:
+        max_stack_size = max_stack_sizes.get(relevant_item_id, 64)
         if item_name := lang.get(f'item.minecraft.{relevant_item_id.split(":")[1]}'):
             item_icon = get_item_icon(relevant_item_id, item_name)
-            items[relevant_item_id] = {'name': item_name, 'icon': item_icon}
+            items[relevant_item_id] = {'name': item_name, 'icon': item_icon, 'stack': max_stack_size}
         elif block_name := lang.get(f'block.minecraft.{relevant_item_id.split(":")[1]}'):
             block_icon = get_block_icon(relevant_item_id, block_name)
-            items[relevant_item_id] = {'name': block_name, 'icon': block_icon}
+            items[relevant_item_id] = {'name': block_name, 'icon': block_icon, 'stack': max_stack_size}
         else:
             raise RuntimeError(f'cannot find name for {relevant_item_id}')
     with open('static/items.json', 'w') as f:
