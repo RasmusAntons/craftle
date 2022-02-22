@@ -57,15 +57,14 @@ function initIngredients() {
 				cursorItemDiv.style.top = `${e.clientY - 24}px`;
 			} else if (e.button === 0) {
 				if (selectedIngredient === ingredient) {
-					incrementStack(cursorItemDiv, items[ingredient].stack, shift ? 64 : 1);
+					incrementStack(cursorItemDiv, items[ingredient].stack, shift ? items[ingredient].stack : 1);
 				} else {
-					selectedIngredient = ingredient;
-					setIngredientIcon(cursorItemDiv, ingredient);
-					cursorItemDiv.style.left = `${e.clientX - 24}px`;
-					cursorItemDiv.style.top = `${e.clientY - 24}px`;
+					selectedIngredient = null;
+					setIngredientIcon(cursorItemDiv, selectedIngredient);
 				}
 			} else if (e.button === 2) {
-				decrementStack(cursorItemDiv);
+				if (decrementStack(cursorItemDiv) === 0)
+					selectedIngredient = null;
 			}
 		});
 	}
@@ -85,19 +84,54 @@ function initCraftingTable() {
 	attempts = 0;
 	for (let [i, ingredientInput] of Object.entries(document.querySelectorAll('#crafting-input .ingredient'))) {
 		ingredientInput.addEventListener('mousedown', e => {
-			if (e.button === 0) {
-				const previousIngredient = craftingInputs[i];
-				const previousStack = ingredientInput.firstChild.textContent;
-				craftingInputs[i] = selectedIngredient;
-				setIngredientIcon(ingredientInput, selectedIngredient);
-				ingredientInput.firstChild.textContent = cursorItemDiv.firstChild.textContent;
-				selectedIngredient = previousIngredient;
+			if (e.button !== 0 && e.button !== 2)
+				return;
+			if (selectedIngredient === null && craftingInputs[i] === null)
+				return;
+			const previousIngredient = craftingInputs[i];
+			const previousStack = ingredientInput.firstChild.textContent;
+			const previousStackN = Number(previousStack || 1);
+			const cursorStackN = Number(cursorItemDiv.firstChild.textContent || 1);
+			if (e.button === 0 && e.getModifierState('Shift')) { // drop ingredient
+				craftingInputs[i] = null;
+				setIngredientIcon(ingredientInput, null);
+			} else if (selectedIngredient) {
+				if (selectedIngredient === craftingInputs[i]) { // merge stacks
+					let transferSize = Math.min((e.button === 0) ? cursorStackN : 1, items[previousIngredient].stack - previousStackN);
+					incrementStack(ingredientInput, items[previousIngredient].stack, transferSize);
+					if (decrementStack(cursorItemDiv, transferSize) === 0)
+						selectedIngredient = null;
+				} else if (e.button === 0 || previousIngredient) { // swap stacks
+					craftingInputs[i] = selectedIngredient;
+					setIngredientIcon(ingredientInput, selectedIngredient);
+					ingredientInput.firstChild.textContent = cursorItemDiv.firstChild.textContent;
+					selectedIngredient = previousIngredient;
+					setIngredientIcon(cursorItemDiv, selectedIngredient);
+					cursorItemDiv.firstChild.textContent = previousStack;
+				} else { // drop one item
+					craftingInputs[i] = selectedIngredient;
+					setIngredientIcon(ingredientInput, selectedIngredient);
+					if (decrementStack(cursorItemDiv, 1) === 0)
+						selectedIngredient = null;
+				}
+			} else {
+				 if (e.button === 0) { // pick up entire stack
+					craftingInputs[i] = null;
+					setIngredientIcon(ingredientInput, null);
+					selectedIngredient = previousIngredient;
+					setIngredientIcon(cursorItemDiv, selectedIngredient);
+					cursorItemDiv.firstChild.textContent = previousStack;
+				} else { // pick up half stack
+					const transferSize = Math.ceil(previousStackN / 2);
+					if (decrementStack(ingredientInput, transferSize) === 0)
+						craftingInputs[i] = null;
+					selectedIngredient = previousIngredient;
+					setIngredientIcon(cursorItemDiv, previousIngredient, transferSize);
+				}
 				cursorItemDiv.style.left = `${e.clientX - 24}px`;
 				cursorItemDiv.style.top = `${e.clientY - 24}px`;
-				setIngredientIcon(cursorItemDiv, selectedIngredient);
-				cursorItemDiv.firstChild.textContent = previousStack;
-				updateCraftingOutput();
 			}
+			updateCraftingOutput();
 		});
 	}
 	const craftingOutputDiv = document.getElementById('crafting-output');
@@ -105,8 +139,6 @@ function initCraftingTable() {
 		if (e.button !== 0)
 				return;
 		if (craftingOutput !== null) {
-			const inventoryDiv = document.querySelectorAll('.invslot .ingredient')[attempts];
-			setIngredientIcon(inventoryDiv, craftingOutput);
 			handleCraftingAttempt();
 		}
 	});
@@ -141,16 +173,25 @@ function incrementStack(ingredientDiv, maxStack, amount) {
 function decrementStack(ingredientDiv, amount) {
 	if (amount === undefined)
 		amount = 1;
-	const newStack = Number(cursorItemDiv.firstChild.textContent || 1) - amount;
+	const newStack = Math.max(Number(ingredientDiv.firstChild.textContent || 1) - amount, 0);
 	if (newStack > 0) {
 		ingredientDiv.firstChild.textContent = (newStack > 1) ? newStack.toString() : '';
 	} else {
-		selectedIngredient = null;
-		setIngredientIcon(cursorItemDiv, null);
+		setIngredientIcon(ingredientDiv, null);
 	}
+	return newStack;
 }
 
 function handleCraftingAttempt() {
+	const inventoryDiv = document.querySelectorAll('.invslot .ingredient')[attempts];
+	setIngredientIcon(inventoryDiv, craftingOutput);
+	for (let [i, ingredientInput] of Object.entries(document.querySelectorAll('#crafting-input .ingredient'))) {
+		if (craftingInputs[i] !== null){
+			if (decrementStack(ingredientInput) === 0)
+				craftingInputs[i] = null;
+		}
+	}
+	updateCraftingOutput();
 	++attempts;
 	if (targetRecipes.some(r => r.getResult() === targetItem)) {
 		alert('success');
@@ -219,7 +260,8 @@ document.addEventListener('DOMContentLoaded', () => {
 				selectedIngredient = null;
 				setIngredientIcon(cursorItemDiv, selectedIngredient);
 			} else if (e.button === 2) {
-				decrementStack(cursorItemDiv);
+				if (decrementStack(cursorItemDiv) === 0)
+					selectedIngredient = null;
 			}
 		}
 	});
