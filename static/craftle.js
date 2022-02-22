@@ -8,6 +8,7 @@ let craftableItems;
 let selectedIngredient = null;
 let craftingInputs;
 let craftingOutput;
+let craftingOutputCount;
 let attempts;
 let cursorItemDiv;
 const MAX_ATTEMPTS = 36;
@@ -184,7 +185,7 @@ function decrementStack(ingredientDiv, amount) {
 
 function handleCraftingAttempt() {
 	const inventoryDiv = document.querySelectorAll('.invslot .ingredient')[attempts];
-	setIngredientIcon(inventoryDiv, craftingOutput);
+	setIngredientIcon(inventoryDiv, craftingOutput, craftingOutputCount);
 	++attempts;
 	if (targetRecipes.some(r => r.getResult() === targetItem)) {
 		alert('success');
@@ -206,7 +207,9 @@ function handleCraftingAttempt() {
 		}
 	}
 	updateCraftingOutput();
-	document.getElementById('attempts').appendChild(craftingAttemptDiv);
+	const craftingAttemptsDiv = document.getElementById('attempts');
+	craftingAttemptsDiv.appendChild(craftingAttemptDiv);
+	craftingAttemptsDiv.scrollTop = craftingAttemptsDiv.scrollHeight;
 }
 
 function updateCraftingOutput() {
@@ -215,7 +218,8 @@ function updateCraftingOutput() {
 		const resultItem = recipe.getResult();
 		if (resultItem) {
 			craftingOutput = resultItem;
-			setIngredientIcon(craftingOutputDiv, craftingOutput);
+			craftingOutputCount = recipe.getResultCount();
+			setIngredientIcon(craftingOutputDiv, craftingOutput, craftingOutputCount);
 			return;
 		}
 	}

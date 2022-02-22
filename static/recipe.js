@@ -71,6 +71,10 @@ class ShapedRecipe extends Recipe {
 			return null;
 	}
 
+	getResultCount() {
+		return this.data.result.count || 1;
+	}
+
 	flatPattern(rowOffset, colOffset) {
 		const res = new Array(9).fill(null);
 		for (let [rowNumber, row] of this.data.pattern.entries()) {
@@ -186,6 +190,10 @@ class ShapelessRecipe extends Recipe {
 			return this.data.result.item;
 		else
 			return null;
+	}
+
+	getResultCount() {
+		return this.data.result.count || 1;
 	}
 
 	checkExact() {
