@@ -185,13 +185,6 @@ function decrementStack(ingredientDiv, amount) {
 function handleCraftingAttempt() {
 	const inventoryDiv = document.querySelectorAll('.invslot .ingredient')[attempts];
 	setIngredientIcon(inventoryDiv, craftingOutput);
-	for (let [i, ingredientInput] of Object.entries(document.querySelectorAll('#crafting-input .ingredient'))) {
-		if (craftingInputs[i] !== null){
-			if (decrementStack(ingredientInput) === 0)
-				craftingInputs[i] = null;
-		}
-	}
-	updateCraftingOutput();
 	++attempts;
 	if (targetRecipes.some(r => r.getResult() === targetItem)) {
 		alert('success');
@@ -206,6 +199,13 @@ function handleCraftingAttempt() {
 		craftSlot.style.backgroundColor = craftingFeedback[i] ? craftingFeedback[i] : '';
 		setIngredientIcon(craftSlot.firstChild, craftingInputs[i]);
 	}
+	for (let [i, ingredientInput] of Object.entries(document.querySelectorAll('#crafting-input .ingredient'))) {
+		if (craftingInputs[i] !== null){
+			if (decrementStack(ingredientInput) === 0)
+				craftingInputs[i] = null;
+		}
+	}
+	updateCraftingOutput();
 	document.getElementById('attempts').appendChild(craftingAttemptDiv);
 }
 
