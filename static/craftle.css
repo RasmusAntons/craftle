@@ -388,3 +388,35 @@ h1 {
 	position: relative;
 	float: left;
 }
+
+/* loading overlay */
+
+#loading-overlay {
+	position: fixed;
+	width: 100vw;
+	height: 100vh;
+	background-color: #ef323d;
+	z-index: 1000;
+	text-align: center;
+	padding-top: 40vh;
+}
+
+#loading-logo {
+	position: relative;
+}
+
+#loading-progress-box {
+	position: absolute;
+	border: .2vw solid white;
+	width: 64vw;
+	height: 3vh;
+	top: 76vh;
+	left: 18vw;
+	padding: .2vw;
+}
+
+#loading-progress {
+	background-color: white;
+	width: 0;
+	height: 3vh;
+}

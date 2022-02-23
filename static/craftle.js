@@ -11,6 +11,7 @@ let craftingOutput;
 let craftingOutputCount;
 let attempts;
 let cursorItemDiv;
+let loadingProgress = 0;
 const MAX_ATTEMPTS = 36;
 
 function mulberry32(a) {
@@ -227,13 +228,29 @@ function updateCraftingOutput() {
 	setIngredientIcon(craftingOutputDiv, null);
 }
 
+function updateLoadingProgress(complete) {
+	const loadingOverlay = document.getElementById('loading-overlay');
+	const loadingProgressBar = document.getElementById('loading-progress');
+	if (complete) {
+		loadingProgressBar.style.width = '100%';
+		loadingOverlay.style.opacity = '0';
+		loadingOverlay.style.pointerEvents = 'none';
+	} else {
+		++loadingProgress;
+		console.log('now', loadingProgress);
+		const width = 100 - (100 / Math.pow(2, loadingProgress));
+		loadingProgressBar.style.width = `${width}%`;
+	}
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 	const fetchRecipes = fetch('recipes.json').then(r => r.json()).then(rs => {
 		recipes = rs.map(r => Recipe.fromJSON(r));
-	});
-	const fetchTags = fetch('tags.json').then(r => r.json()).then(r => tags = r);
-	const fetchItems = fetch('items.json').then(r => r.json()).then(r => items = r);
+	}).then(() => updateLoadingProgress());
+	const fetchTags = fetch('tags.json').then(r => r.json()).then(r => tags = r).then(() => updateLoadingProgress());
+	const fetchItems = fetch('items.json').then(r => r.json()).then(r => items = r).then(() => updateLoadingProgress());
 	Promise.all([fetchRecipes, fetchTags, fetchItems]).then(() => {
+		updateLoadingProgress(true);
 		ingredients = new Set();
 		craftableItems = new Set();
 		for (let recipe of recipes) {
