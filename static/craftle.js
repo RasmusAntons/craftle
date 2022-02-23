@@ -237,7 +237,6 @@ function updateLoadingProgress(complete) {
 		loadingOverlay.style.pointerEvents = 'none';
 	} else {
 		++loadingProgress;
-		console.log('now', loadingProgress);
 		const width = 100 - (100 / Math.pow(2, loadingProgress));
 		loadingProgressBar.style.width = `${width}%`;
 	}

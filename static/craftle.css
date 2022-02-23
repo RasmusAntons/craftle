@@ -244,7 +244,7 @@ h1 {
 	clear: left;
 }
 
-#crafting-output {
+#crafting-output-container {
 	float: left;
 	text-align: center;
 	box-sizing: border-box;
@@ -255,11 +255,7 @@ h1 {
 	border: 40px solid #c6c6c6;
 	background-repeat: no-repeat;
 	background-position: center;
-
-	/* TODO: temp fix remove this and add a .ingredient instead */
-	background-size: 48px 48px;
-	image-rendering: crisp-edges;
-	image-rendering: pixelated;
+	padding-top: 13px;
 }
 
 .stack {
