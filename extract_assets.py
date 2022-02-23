@@ -209,6 +209,14 @@ max_stack_sizes = {
     'minecraft:jungle_sign': 16
 }
 
+crafting_recipe_types = {
+    'minecraft:crafting_shaped': None,
+    'minecraft:crafting_shapeless': None,
+    'minecraft:crafting_special_firework_rocket': (
+        'minecraft:firework_rocket', 'minecraft:gunpowder', 'minecraft:paper', 'minecraft:firework_star'
+    )
+}
+
 
 def is_texture_asset(s):
     if s.startswith('assets/minecraft/textures/item/'):
@@ -301,15 +309,19 @@ def expand_ingredient_choices(ingredient_choices, ingredient_tags):
 def extract_item_ids(crafting_recipes, ingredient_tags):
     item_ids = set()
     for recipe in crafting_recipes:
-        item_ids.add(recipe['result']['item'])
         if recipe['type'] == 'minecraft:crafting_shapeless':
+            item_ids.add(recipe['result']['item'])
             for ingredient_choices in recipe['ingredients']:
                 for ingredient_choice in expand_ingredient_choices(ingredient_choices, ingredient_tags):
                     item_ids.add(ingredient_choice)
         elif recipe['type'] == 'minecraft:crafting_shaped':
+            item_ids.add(recipe['result']['item'])
             for _, ingredient_choices in recipe['key'].items():
                 for ingredient_choice in expand_ingredient_choices(ingredient_choices, ingredient_tags):
                     item_ids.add(ingredient_choice)
+        else:
+            for ingredient_choice in crafting_recipe_types[recipe['type']]:
+                item_ids.add(ingredient_choice)
     return item_ids
 
 
@@ -388,7 +400,7 @@ if __name__ == '__main__':
                 jar.extract(zip_info, 'res/cache/jar')
             elif is_recipe_json(zip_info.filename):
                 recipe_dict = json.loads(jar.read(zip_info.filename))
-                if recipe_dict['type'] in ('minecraft:crafting_shaped', 'minecraft:crafting_shapeless'):
+                if recipe_dict['type'] in crafting_recipe_types:
                     recipes.append(recipe_dict)
             elif is_tag_json(zip_info.filename):
                 tags[pathlib.Path(zip_info.filename).stem] = json.loads(jar.read(zip_info.filename))

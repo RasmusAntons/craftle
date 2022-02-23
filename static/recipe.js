@@ -39,6 +39,8 @@ class Recipe {
 				return new ShapedRecipe(jsonData);
 			case 'minecraft:crafting_shapeless':
 				return new ShapelessRecipe(jsonData);
+			case 'minecraft:crafting_special_firework_rocket':
+				return new SpecialFireworkRocketRecipe();
 			default:
 				throw `Invalid crafting recipe type: ${jsonData.type}`;
 		}
@@ -241,5 +243,65 @@ class ShapelessRecipe extends Recipe {
 			}
 		}
 		return [score, resultColours];
+	}
+}
+
+class SpecialFireworkRocketRecipe extends ShapelessRecipe {
+	constructor() {
+		super({ingredients: null});
+	}
+
+	getIngredients() {
+		return new Set(['minecraft:paper', 'minecraft:gunpowder', 'minecraft:firework_star']);
+	}
+
+	getPossibleResults() {
+		return ['minecraft:firework_rocket'];
+	}
+
+	getResult() {
+		if (this.checkExact())
+			return 'minecraft:firework_rocket';
+		else
+			return null;
+	}
+
+	getResultCount() {
+		return 3;
+	}
+
+	checkExact() {
+		let paper = 0;
+		let gunpowder = 0;
+		let fireworkStar = 0;
+		this.data = {ingredients: []}
+		for (let craftingInput of craftingInputs) {
+			switch (craftingInput) {
+				case 'minecraft:paper':
+					++paper;
+					break;
+				case 'minecraft:gunpowder':
+					++gunpowder
+					break;
+				case 'minecraft:firework_star':
+					++fireworkStar;
+					break
+				case null:
+					continue;
+				default:
+					return false;
+			}
+			this.data.ingredients.push(craftingInput);
+		}
+		return (paper === 1 && 0 < gunpowder && gunpowder < 4 && 1 < gunpowder + fireworkStar)
+	}
+
+	score() {
+		let gunpowder = Math.min(3, Math.max(1, craftingInputs.filter(e => e ==='minecraft:gunpowder').length));
+		let fireworkStars = Math.min(7, craftingInputs.filter(e => e ==='minecraft:firework_star').length);
+		this.data.ingredients = [{item: 'minecraft:paper'}];
+		this.data.ingredients.push(...(new Array(gunpowder).fill({item: 'minecraft:gunpowder'})));
+		this.data.ingredients.push(...(new Array(fireworkStars).fill({item: 'minecraft:firework_star'})));
+		return super.score();
 	}
 }
