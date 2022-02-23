@@ -420,4 +420,5 @@ h1 {
 	background-color: white;
 	width: 0;
 	height: 3vh;
+	transition-duration: 0.2s;
 }
