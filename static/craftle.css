@@ -399,6 +399,7 @@ h1 {
 	z-index: 1000;
 	text-align: center;
 	padding-top: 40vh;
+	transition-duration: 1s;
 }
 
 #loading-logo {
