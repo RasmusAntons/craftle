@@ -18,10 +18,6 @@ class Recipe {
 				return r;
 			}, []);
 		}
-		for (let expandedElement of res) {
-			if (expandedElement.startsWith('#'))
-				console.log(ingredientChoices, expandedElement);
-		}
 		return res;
 	}
 
@@ -33,6 +29,13 @@ class Recipe {
 		return scoredFeedbackOptions[0][1];
 	}
 
+	static dyes = [
+		'minecraft:red_dye', 'minecraft:green_dye', 'minecraft:purple_dye', 'minecraft:cyan_dye',
+		'minecraft:light_gray_dye', 'minecraft:gray_dye', 'minecraft:pink_dye', 'minecraft:lime_dye',
+		'minecraft:yellow_dye', 'minecraft:light_blue_dye',  'minecraft:magenta_dye', 'minecraft:orange_dye',
+		'minecraft:blue_dye', 'minecraft:black_dye', 'minecraft:brown_dye', 'minecraft:white_dye'
+	];
+
 	static fromJSON(jsonData) {
 		switch (jsonData.type) {
 			case 'minecraft:crafting_shaped':
@@ -41,6 +44,8 @@ class Recipe {
 				return new ShapelessRecipe(jsonData);
 			case 'minecraft:crafting_special_firework_rocket':
 				return new SpecialFireworkRocketRecipe();
+			case 'minecraft:crafting_special_armordye':
+				return new SpecialArmordyeRecipe();
 			default:
 				throw `Invalid crafting recipe type: ${jsonData.type}`;
 		}
@@ -274,7 +279,6 @@ class SpecialFireworkRocketRecipe extends ShapelessRecipe {
 		let paper = 0;
 		let gunpowder = 0;
 		let fireworkStar = 0;
-		this.data = {ingredients: []}
 		for (let craftingInput of craftingInputs) {
 			switch (craftingInput) {
 				case 'minecraft:paper':
@@ -291,7 +295,6 @@ class SpecialFireworkRocketRecipe extends ShapelessRecipe {
 				default:
 					return false;
 			}
-			this.data.ingredients.push(craftingInput);
 		}
 		return (paper === 1 && 0 < gunpowder && gunpowder < 4 && 1 < gunpowder + fireworkStar)
 	}
@@ -302,6 +305,55 @@ class SpecialFireworkRocketRecipe extends ShapelessRecipe {
 		this.data.ingredients = [{item: 'minecraft:paper'}];
 		this.data.ingredients.push(...(new Array(gunpowder).fill({item: 'minecraft:gunpowder'})));
 		this.data.ingredients.push(...(new Array(fireworkStars).fill({item: 'minecraft:firework_star'})));
+		return super.score();
+	}
+}
+
+class SpecialArmordyeRecipe extends ShapelessRecipe {
+	constructor() {
+		super({ingredients: null});
+	}
+
+	static leatherArmor = ['minecraft:leather_helmet', 'minecraft:leather_chestplate', 'minecraft:leather_leggings',
+			'minecraft:leather_boots', 'minecraft:leather_horse_armor'];
+
+	getIngredients() {
+		return new Set(Recipe.dyes.concat(SpecialArmordyeRecipe.leatherArmor));
+	}
+
+	getPossibleResults() {
+		return SpecialArmordyeRecipe.leatherArmor;
+	}
+
+	getResult() {
+		if (this.checkExact())
+			return SpecialArmordyeRecipe.leatherArmor.find(item => craftingInputs.includes(item));
+		else
+			return null;
+	}
+
+	getResultCount() {
+		return 1;
+	}
+
+	checkExact() {
+		let dyedItem = null;
+		let dyes = 0;
+		for (let craftingInput of craftingInputs) {
+			if (SpecialArmordyeRecipe.leatherArmor.includes(craftingInput) && dyedItem === null) {
+				dyedItem = craftingInput;
+			} else if (Recipe.dyes.includes(craftingInput)) {
+				++dyes;
+			} else if (craftingInput !== null) {
+				return false;
+			}
+		}
+		return (dyedItem !== null && dyes > 0);
+	}
+
+	score() {
+		this.data.ingredients = [{item: targetItem}];
+		this.data.ingredients.push(...(craftingInputs.filter(e => Recipe.dyes.includes(e)).map(e => ({item: e}))));
 		return super.score();
 	}
 }

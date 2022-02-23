@@ -212,9 +212,35 @@ max_stack_sizes = {
 crafting_recipe_types = {
     'minecraft:crafting_shaped': None,
     'minecraft:crafting_shapeless': None,
-    'minecraft:crafting_special_firework_rocket': (
-        'minecraft:firework_rocket', 'minecraft:gunpowder', 'minecraft:paper', 'minecraft:firework_star'
-    )
+    'minecraft:crafting_special_firework_rocket': [
+        {'item': 'minecraft:firework_rocket'},
+        {'item': 'minecraft:gunpowder'},
+        {'item': 'minecraft:paper'},
+        {'item': 'minecraft:firework_star'}
+    ],
+    'minecraft:crafting_special_armordye': [
+        {'item': 'minecraft:leather_helmet'},
+        {'item': 'minecraft:leather_chestplate'},
+        {'item': 'minecraft:leather_leggings'},
+        {'item': 'minecraft:leather_boots'},
+        {'item': 'minecraft:leather_horse_armor'},
+        {'item': 'minecraft:red_dye'},
+        {'item': 'minecraft:green_dye'},
+        {'item': 'minecraft:purple_dye'},
+        {'item': 'minecraft:cyan_dye'},
+        {'item': 'minecraft:light_gray_dye'},
+        {'item': 'minecraft:gray_dye'},
+        {'item': 'minecraft:pink_dye'},
+        {'item': 'minecraft:lime_dye'},
+        {'item': 'minecraft:yellow_dye'},
+        {'item': 'minecraft:light_blue_dye'},
+        {'item': 'minecraft:magenta_dye'},
+        {'item': 'minecraft:orange_dye'},
+        {'item': 'minecraft:blue_dye'},
+        {'item': 'minecraft:black_dye'},
+        {'item': 'minecraft:brown_dye'},
+        {'item': 'minecraft:white_dye'},
+    ]
 }
 
 
@@ -320,7 +346,7 @@ def extract_item_ids(crafting_recipes, ingredient_tags):
                 for ingredient_choice in expand_ingredient_choices(ingredient_choices, ingredient_tags):
                     item_ids.add(ingredient_choice)
         else:
-            for ingredient_choice in crafting_recipe_types[recipe['type']]:
+            for ingredient_choice in expand_ingredient_choices(crafting_recipe_types[recipe['type']], ingredient_tags):
                 item_ids.add(ingredient_choice)
     return item_ids
 
