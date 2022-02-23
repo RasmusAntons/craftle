@@ -37,6 +37,7 @@ icon_force_asset = {
     'minecraft:light_gray_stained_glass_pane', 'minecraft:cyan_stained_glass_pane',
     'minecraft:purple_stained_glass_pane', 'minecraft:blue_stained_glass_pane', 'minecraft:brown_stained_glass_pane',
     'minecraft:green_stained_glass_pane', 'minecraft:red_stained_glass_pane', 'minecraft:black_stained_glass_pane',
+    'minecraft:chain'
 }
 
 icon_force_wiki = {

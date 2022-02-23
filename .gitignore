@@ -1,5 +1,6 @@
 /.idea/
-/static/img/minecraft/
 /static/recipes.json
 /static/tags.json
+/static/items.json
 /venv/
+/res/cache/
