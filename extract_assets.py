@@ -240,6 +240,9 @@ crafting_recipe_types = {
         {'item': 'minecraft:black_dye'},
         {'item': 'minecraft:brown_dye'},
         {'item': 'minecraft:white_dye'},
+    ],
+    'minecraft:crafting_special_bannerduplicate': [
+        {'tag': 'minecraft:banners'}
     ]
 }
 

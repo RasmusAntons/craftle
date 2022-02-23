@@ -46,6 +46,8 @@ class Recipe {
 				return new SpecialFireworkRocketRecipe();
 			case 'minecraft:crafting_special_armordye':
 				return new SpecialArmordyeRecipe();
+			case 'minecraft:crafting_special_bannerduplicate':
+				return new SpecialBannerduplicateRecipe();
 			default:
 				throw `Invalid crafting recipe type: ${jsonData.type}`;
 		}
@@ -354,6 +356,55 @@ class SpecialArmordyeRecipe extends ShapelessRecipe {
 	score() {
 		this.data.ingredients = [{item: targetItem}];
 		this.data.ingredients.push(...(craftingInputs.filter(e => Recipe.dyes.includes(e)).map(e => ({item: e}))));
+		return super.score();
+	}
+}
+
+class SpecialBannerduplicateRecipe extends ShapelessRecipe {
+	constructor() {
+		super({ingredients: null});
+	}
+
+	getIngredients() {
+		return new Set(Recipe.expandIngredientChoices({tag: 'minecraft:banners'}));
+	}
+
+	getPossibleResults() {
+		return Recipe.expandIngredientChoices({tag: 'minecraft:banners'});
+	}
+
+	getResult() {
+		if (this.checkExact())
+			return this.getPossibleResults().find(item => craftingInputs.includes(item));
+		else
+			return null;
+	}
+
+	getResultCount() {
+		return 1;
+	}
+
+	checkExact() {
+		let srcBanner = null;
+		let dstBanner = null;
+		let bannerChoices = this.getPossibleResults();
+		for (let craftingInput of craftingInputs) {
+			if (bannerChoices.includes(craftingInput)) {
+				if (srcBanner === null)
+					srcBanner = craftingInput;
+				else if (dstBanner === null)
+					dstBanner = craftingInput;
+				else
+					return false;
+			} else if (craftingInput !== null) {
+				return false;
+			}
+		}
+		return (srcBanner !== null && srcBanner === dstBanner);
+	}
+
+	score() {
+		this.data.ingredients = [{item: targetItem}, {item: targetItem}];
 		return super.score();
 	}
 }
