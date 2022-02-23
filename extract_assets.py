@@ -46,11 +46,11 @@ icon_force_wiki = {
 icon_asset_overrides = {
     'minecraft:compass': 'compass_16',
     'minecraft:sunflower': 'sunflower_front',
-    'minecraft:lilac': 'lilac_front',
+    'minecraft:lilac': 'lilac_top',
     'minecraft:peony': 'peony_top',
     'minecraft:rose_bush': 'rose_bush_top',
     'minecraft:crossbow': 'crossbow_pulling_0',
-    'minecraft:glass_pane': 'minecraft:glass',
+    'minecraft:glass_pane': 'glass',
     'minecraft:white_stained_glass_pane': 'white_stained_glass',
     'minecraft:orange_stained_glass_pane': 'orange_stained_glass',
     'minecraft:magenta_stained_glass_pane': 'magenta_stained_glass',
@@ -181,6 +181,7 @@ max_stack_sizes = {
     'minecraft:netherite_leggings': 1,
     'minecraft:netherite_boots': 1,
     'minecraft:shulker_box': 1,
+    'minecraft:shield': 1
 }
 
 
@@ -290,6 +291,16 @@ def extract_item_ids(crafting_recipes, ingredient_tags):
 def get_block_icon(block_id, name):
     if block_id in icon_force_asset:
         return get_item_icon(block_id, name)
+    filename = block_id.replace('minecraft:', '')
+    if pathlib.Path(f'res/icons/{filename}.png').is_file():
+        with open(f'res/icons/{filename}.png', 'rb') as f:
+            return'data:image/png;base64,' + base64.b64encode(f.read()).decode('utf-8')
+    if pathlib.Path(f'res/cache/wiki/{filename}.png').is_file():
+        with open(f'res/cache/wiki/{filename}.png', 'rb') as f:
+            return'data:image/png;base64,' + base64.b64encode(f.read()).decode('utf-8')
+    if pathlib.Path(f'res/cache/wiki/{filename}.gif').is_file():
+        with open(f'res/cache/wiki/{filename}.gif', 'rb') as f:
+            return'data:image/webp;base64,' + base64.b64encode(f.read()).decode('utf-8')
     name = icon_wiki_overrides.get(name, name)
     wiki_parser = WikiParser(name)
     wiki_url = f'{wiki_url_base}/{name.replace(" ", "_")}'
@@ -313,16 +324,24 @@ def get_block_icon(block_id, name):
             time.sleep(1)
     image_types_by_ext = {'png': 'png', 'gif': 'webp'}
     image_type = image_types_by_ext.get(wiki_parser.image_ext, 'png')
+    with open(f'res/cache/wiki/{filename}.{wiki_parser.image_ext}', 'wb') as f:
+        f.write(res)
     return f'data:image/{image_type};base64,' + base64.b64encode(res).decode('utf-8')
 
 
 def get_item_icon(item_id, name):
     if item_id in icon_force_wiki:
         return get_block_icon(item_id, name)
+    filename = item_id.replace('minecraft:', '')
+    if pathlib.Path(f'res/icons/{filename}.png').is_file():
+        with open(f'res/icons/{filename}.png', 'rb') as f:
+            return'data:image/png;base64,' + base64.b64encode(f.read()).decode('utf-8')
     filename = icon_asset_overrides.get(item_id, item_id.replace('minecraft:', ''))
-    if pathlib.Path(f'tmp/minecraft/{filename}.png').is_file():
-        with open(f'tmp/minecraft/{filename}.png', 'rb') as f:
+    if pathlib.Path(f'res/cache/jar/{filename}.png').is_file():
+        with open(f'res/cache/jar/{filename}.png', 'rb') as f:
             return 'data:image/png;base64,' + base64.b64encode(f.read()).decode('utf-8')
+    else:
+        print(f'failed to find asset for {item_id} (expected {filename}.png)')
     return ''
 
 
@@ -333,14 +352,15 @@ if __name__ == '__main__':
         jar_path = pathlib.Path.home() / '.local/share/multimc/libraries/com/mojang/minecraft/1.18.1/minecraft-1.18.1-client.jar'
     recipes = []
     tags = {}
-    pathlib.Path('tmp/minecraft').mkdir(parents=True, exist_ok=True)
+    pathlib.Path('res/cache/jar').mkdir(parents=True, exist_ok=True)
+    pathlib.Path('res/cache/wiki').mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(jar_path, 'r') as jar:
         for zip_info in jar.infolist():
             if zip_info.is_dir():
                 continue
             if is_texture_asset(zip_info.filename):
                 zip_info.filename = pathlib.Path(zip_info.filename).name
-                jar.extract(zip_info, 'tmp/minecraft')
+                jar.extract(zip_info, 'res/cache/jar')
             elif is_recipe_json(zip_info.filename):
                 recipe_dict = json.loads(jar.read(zip_info.filename))
                 if recipe_dict['type'] in ('minecraft:crafting_shaped', 'minecraft:crafting_shapeless'):
