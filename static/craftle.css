@@ -410,6 +410,7 @@ h1 {
 	top: 81vh;
 	left: 18vw;
 	padding: .2vw;
+	transition: opacity 1s;
 }
 
 #loading-progress {

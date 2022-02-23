@@ -230,11 +230,15 @@ function updateCraftingOutput() {
 
 function updateLoadingProgress(complete) {
 	const loadingOverlay = document.getElementById('loading-overlay');
+	const loadingProgressBox = document.getElementById('loading-progress-box');
 	const loadingProgressBar = document.getElementById('loading-progress');
 	if (complete) {
 		loadingProgressBar.style.width = '100%';
-		loadingOverlay.style.opacity = '0';
-		loadingOverlay.style.pointerEvents = 'none';
+		loadingProgressBox.style.opacity = '0';
+		setTimeout(() => {
+			loadingOverlay.style.opacity = '0';
+			loadingOverlay.style.pointerEvents = 'none';
+		}, 1000);
 	} else {
 		++loadingProgress;
 		const width = 100 - (100 / Math.pow(2, loadingProgress));
