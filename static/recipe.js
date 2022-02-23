@@ -48,6 +48,8 @@ class Recipe {
 				return new SpecialArmordyeRecipe();
 			case 'minecraft:crafting_special_bannerduplicate':
 				return new SpecialBannerduplicateRecipe();
+			case 'minecraft:crafting_special_bookcloning':
+				return new SpecialBookcloningRecipe();
 			default:
 				throw `Invalid crafting recipe type: ${jsonData.type}`;
 		}
@@ -405,6 +407,53 @@ class SpecialBannerduplicateRecipe extends ShapelessRecipe {
 
 	score() {
 		this.data.ingredients = [{item: targetItem}, {item: targetItem}];
+		return super.score();
+	}
+}
+
+class SpecialBookcloningRecipe extends ShapelessRecipe {
+	constructor() {
+		super({ingredients: null});
+	}
+
+	getIngredients() {
+		return new Set(['minecraft:written_book', 'minecraft:writable_book']);
+	}
+
+	getPossibleResults() {
+		return ['minecraft:written_book'];
+	}
+
+	getResult() {
+		if (this.checkExact())
+			return 'minecraft:written_book';
+		else
+			return null;
+	}
+
+	getResultCount() {
+		return craftingInputs.filter(e => e === 'minecraft:writable_book').length;
+	}
+
+	checkExact() {
+		let srcBooks = 0;
+		let dstBooks = 0;
+		for (let craftingInput of craftingInputs) {
+			if (craftingInput === 'minecraft:written_book') {
+				++srcBooks;
+			} else if (craftingInput === 'minecraft:writable_book') {
+				++dstBooks;
+			} else if (craftingInput !== null) {
+				return false;
+			}
+		}
+		return (srcBooks === 1 && dstBooks > 0);
+	}
+
+	score() {
+		this.data.ingredients = [{item: 'minecraft:written_book'}];
+		let dstBooks = Math.min(7, craftingInputs.filter(e => e ==='minecraft:writable_book').length);
+		this.data.ingredients.push(...(new Array(dstBooks).fill({item: 'minecraft:writable_book'})));
 		return super.score();
 	}
 }

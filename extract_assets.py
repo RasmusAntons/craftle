@@ -41,7 +41,7 @@ icon_force_asset = {
 }
 
 icon_force_wiki = {
-    'minecraft:enchanted_golden_apple'
+    'minecraft:enchanted_golden_apple', 'minecraft:written_book'
 }
 
 icon_asset_overrides = {
@@ -243,6 +243,10 @@ crafting_recipe_types = {
     ],
     'minecraft:crafting_special_bannerduplicate': [
         {'tag': 'minecraft:banners'}
+    ],
+    'minecraft:crafting_special_bookcloning': [
+        {'item': 'minecraft:written_book'},
+        {'item': 'minecraft:writable_book'}
     ]
 }
 
