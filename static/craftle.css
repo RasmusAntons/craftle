@@ -394,20 +394,20 @@ h1 {
 	background-color: #ef323d;
 	z-index: 1000;
 	text-align: center;
-	padding-top: 40vh;
-	transition-duration: 1s;
+	padding-top: 35vh;
+	transition: opacity 1s;
 }
 
 #loading-logo {
-	position: relative;
+	width: 64vw;
 }
 
 #loading-progress-box {
 	position: absolute;
 	border: .2vw solid white;
 	width: 64vw;
-	height: 3vh;
-	top: 76vh;
+	height: 2vh;
+	top: 81vh;
 	left: 18vw;
 	padding: .2vw;
 }
@@ -415,6 +415,6 @@ h1 {
 #loading-progress {
 	background-color: white;
 	width: 0;
-	height: 3vh;
-	transition-duration: 0.2s;
+	height: 2vh;
+	transition: width 0.2s;
 }
