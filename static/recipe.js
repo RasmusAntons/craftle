@@ -50,6 +50,8 @@ class Recipe {
 				return new SpecialBannerduplicateRecipe();
 			case 'minecraft:crafting_special_bookcloning':
 				return new SpecialBookcloningRecipe();
+			case 'minecraft:crafting_special_firework_star':
+				return new SpecialFireworkStarRecipe();
 			default:
 				throw `Invalid crafting recipe type: ${jsonData.type}`;
 		}
@@ -357,7 +359,9 @@ class SpecialArmordyeRecipe extends ShapelessRecipe {
 
 	score() {
 		this.data.ingredients = [{item: targetItem}];
-		this.data.ingredients.push(...(craftingInputs.filter(e => Recipe.dyes.includes(e)).map(e => ({item: e}))));
+		const dyes = craftingInputs.filter(e => Recipe.dyes.includes(e)).map(e => ({item: e}));
+		dyes.splice(8);
+		this.data.ingredients.push(...dyes);
 		return super.score();
 	}
 }
@@ -454,6 +458,79 @@ class SpecialBookcloningRecipe extends ShapelessRecipe {
 		this.data.ingredients = [{item: 'minecraft:written_book'}];
 		let dstBooks = Math.min(7, craftingInputs.filter(e => e ==='minecraft:writable_book').length);
 		this.data.ingredients.push(...(new Array(dstBooks).fill({item: 'minecraft:writable_book'})));
+		return super.score();
+	}
+}
+
+class SpecialFireworkStarRecipe extends ShapelessRecipe {
+	constructor() {
+		super({ingredients: null});
+	}
+
+	static extraIngredients = ['minecraft:skeleton_skull', 'minecraft:wither_skeleton_skull',
+			'minecraft:player_head', 'minecraft:zombie_head', 'minecraft:creeper_head', 'minecraft:dragon_head',
+			'minecraft:fire_charge', 'minecraft:gold_nugget'];
+
+	getIngredients() {
+		return new Set(Recipe.dyes.concat(SpecialFireworkStarRecipe.extraIngredients).concat([
+			'minecraft:gunpowder', 'minecraft:feather', 'minecraft:glowstone_dust','minecraft:diamond'
+		]));
+	}
+
+	getPossibleResults() {
+		return ['minecraft:firework_star'];
+	}
+
+	getResult() {
+		if (this.checkExact())
+			return 'minecraft:firework_star';
+		else
+			return null;
+	}
+
+	getResultCount() {
+		return 1;
+	}
+
+	checkExact() {
+		let gunpowder = 0;
+		let dyes = 0;
+		let extra = 0;
+		let diamond = 0;
+		let glowstone = 0;
+		for (let craftingInput of craftingInputs) {
+			if (craftingInput === 'minecraft:gunpowder') {
+				++gunpowder;
+			} else if (Recipe.dyes.includes(craftingInput)) {
+				++dyes;
+			} else if (SpecialFireworkStarRecipe.extraIngredients.includes(craftingInput)) {
+				++extra;
+			} else if (craftingInput === 'minecraft:diamond') {
+				++diamond;
+			} else if (craftingInput === 'minecraft:glowstone_dust') {
+				++glowstone;
+			} else if (craftingInput !== null) {
+				return false;
+			}
+		}
+		return (gunpowder === 1 && dyes > 0 && extra < 2 && diamond < 2 && glowstone < 2);
+	}
+
+	score() {
+		this.data.ingredients = [{item: 'minecraft:gunpowder'}];
+		if (craftingInputs.some(e => e === 'minecraft:diamond'))
+			this.data.ingredients.push({item: 'minecraft:diamond'});
+		if (craftingInputs.some(e => e === 'minecraft:glowstone'))
+			this.data.ingredients.push({item: 'minecraft:glowstone'});
+		const extra = craftingInputs.find(e => SpecialFireworkStarRecipe.extraIngredients.includes(e));
+		if (extra)
+			this.data.ingredients.push({item: extra});
+		const dyes = craftingInputs.filter(e => Recipe.dyes.includes(e)).map(e => ({item: e}));
+		dyes.splice(9 - this.data.ingredients.length);
+		if (dyes.length > 0)
+			this.data.ingredients.push(...dyes);
+		else
+			this.data.ingredients.push({item: 'minecraft:red_dye'});
 		return super.score();
 	}
 }

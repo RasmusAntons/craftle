@@ -209,6 +209,25 @@ max_stack_sizes = {
     'minecraft:jungle_sign': 16
 }
 
+dye_items = [
+    {'item': 'minecraft:red_dye'},
+    {'item': 'minecraft:green_dye'},
+    {'item': 'minecraft:purple_dye'},
+    {'item': 'minecraft:cyan_dye'},
+    {'item': 'minecraft:light_gray_dye'},
+    {'item': 'minecraft:gray_dye'},
+    {'item': 'minecraft:pink_dye'},
+    {'item': 'minecraft:lime_dye'},
+    {'item': 'minecraft:yellow_dye'},
+    {'item': 'minecraft:light_blue_dye'},
+    {'item': 'minecraft:magenta_dye'},
+    {'item': 'minecraft:orange_dye'},
+    {'item': 'minecraft:blue_dye'},
+    {'item': 'minecraft:black_dye'},
+    {'item': 'minecraft:brown_dye'},
+    {'item': 'minecraft:white_dye'}
+]
+
 crafting_recipe_types = {
     'minecraft:crafting_shaped': None,
     'minecraft:crafting_shapeless': None,
@@ -224,22 +243,7 @@ crafting_recipe_types = {
         {'item': 'minecraft:leather_leggings'},
         {'item': 'minecraft:leather_boots'},
         {'item': 'minecraft:leather_horse_armor'},
-        {'item': 'minecraft:red_dye'},
-        {'item': 'minecraft:green_dye'},
-        {'item': 'minecraft:purple_dye'},
-        {'item': 'minecraft:cyan_dye'},
-        {'item': 'minecraft:light_gray_dye'},
-        {'item': 'minecraft:gray_dye'},
-        {'item': 'minecraft:pink_dye'},
-        {'item': 'minecraft:lime_dye'},
-        {'item': 'minecraft:yellow_dye'},
-        {'item': 'minecraft:light_blue_dye'},
-        {'item': 'minecraft:magenta_dye'},
-        {'item': 'minecraft:orange_dye'},
-        {'item': 'minecraft:blue_dye'},
-        {'item': 'minecraft:black_dye'},
-        {'item': 'minecraft:brown_dye'},
-        {'item': 'minecraft:white_dye'},
+        *dye_items
     ],
     'minecraft:crafting_special_bannerduplicate': [
         {'tag': 'minecraft:banners'}
@@ -247,6 +251,21 @@ crafting_recipe_types = {
     'minecraft:crafting_special_bookcloning': [
         {'item': 'minecraft:written_book'},
         {'item': 'minecraft:writable_book'}
+    ],
+    'minecraft:crafting_special_firework_star': [
+        {'item': 'minecraft:gunpowder'},
+        {'item': 'minecraft:skeleton_skull'},
+        {'item': 'minecraft:wither_skeleton_skull'},
+        {'item': 'minecraft:player_head'},
+        {'item': 'minecraft:zombie_head'},
+        {'item': 'minecraft:creeper_head'},
+        {'item': 'minecraft:dragon_head'},
+        {'item': 'minecraft:glowstone_dust'},
+        {'item': 'minecraft:gold_nugget'},
+        {'item': 'minecraft:feather'},
+        {'item': 'minecraft:fire_charge'},
+        {'item': 'minecraft:diamond'},
+        *dye_items
     ]
 }
 
