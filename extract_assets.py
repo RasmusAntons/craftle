@@ -181,7 +181,31 @@ max_stack_sizes = {
     'minecraft:netherite_leggings': 1,
     'minecraft:netherite_boots': 1,
     'minecraft:shulker_box': 1,
-    'minecraft:shield': 1
+    'minecraft:shield': 1,
+    'minecraft:gray_banner': 16,
+    'minecraft:brown_banner': 16,
+    'minecraft:magenta_banner': 16,
+    'minecraft:lime_banner': 16,
+    'minecraft:light_blue_banner': 16,
+    'minecraft:purple_banner': 16,
+    'minecraft:red_banner': 16,
+    'minecraft:light_gray_banner': 16,
+    'minecraft:white_banner': 16,
+    'minecraft:orange_banner': 16,
+    'minecraft:cyan_banner': 16,
+    'minecraft:blue_banner': 16,
+    'minecraft:green_banner': 16,
+    'minecraft:pink_banner': 16,
+    'minecraft:yellow_banner': 16,
+    'minecraft:black_banner': 16,
+    'minecraft:acacia_sign': 16,
+    'minecraft:spruce_sign': 16,
+    'minecraft:dark_oak_sign': 16,
+    'minecraft:birch_sign': 16,
+    'minecraft:crimson_sign': 16,
+    'minecraft:oak_sign': 16,
+    'minecraft:warped_sign': 16,
+    'minecraft:jungle_sign': 16
 }
 
 
