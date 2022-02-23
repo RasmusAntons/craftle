@@ -191,7 +191,7 @@ function handleCraftingAttempt() {
 	if (targetRecipes.some(r => r.getResult() === targetItem)) {
 		alert('success');
 	} else if (attempts === MAX_ATTEMPTS) {
-		alert('fail');
+		alert(`fail (the target item was ${items[targetItem].name})`);
 		return;
 	}
 	const craftingFeedback = Recipe.getCraftingFeedback();
