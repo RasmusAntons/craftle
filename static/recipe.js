@@ -189,7 +189,7 @@ class ShapedRecipe extends Recipe {
 		for (let rowOffset = 0; rowOffset < (4 - nRows); ++rowOffset) {
 			for (let colOffset = 0; colOffset < (4 - nCols); ++colOffset) {
 				for (let mirror of [false, true]) {
-					scoredFeedbackOptions.push(this.scoreAtOffset(rowOffset, colOffset));
+					scoredFeedbackOptions.push(this.scoreAtOffset(rowOffset, colOffset, mirror));
 				}
 			}
 		}
