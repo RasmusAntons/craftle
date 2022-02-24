@@ -60,6 +60,10 @@ class Recipe {
 				return new SpecialShielddecorationRecipe();
 			case 'minecraft:crafting_special_shulkerboxcoloring':
 				return new SpecialShulkerboxcoloringRecipe();
+			case 'minecraft:crafting_special_tippedarrow':
+				return new SpecialTippedarrowRecipe();
+			case 'minecraft:crafting_special_suspiciousstew':
+				return new SpecialSuspiciousstewRecipe();
 			default:
 				throw `Invalid crafting recipe type: ${jsonData.type}`;
 		}
@@ -697,6 +701,74 @@ class SpecialShulkerboxcoloringRecipe extends ShapelessRecipe {
 		const shulkerBox = craftingInputs.find(e => Recipe.expandIngredientChoices({tag: 'minecraft:shulker_boxes'}).includes(e));
 		const dye = targetItem.replace('shulker_box', 'dye');
 		this.data.ingredients = [{item: shulkerBox || 'minecraft:shulker_box'}, {item: dye || 'minecraft:red_dye'}];
+		return super.score();
+	}
+}
+
+class SpecialTippedarrowRecipe extends ShapedRecipe {
+	constructor() {
+		super({
+			pattern: [
+				'XXX',
+				'XoX',
+				'XXX'
+			],
+			key: {
+				'X': {item: 'minecraft:arrow'},
+				'o': {item: 'minecraft:lingering_potion'}
+			},
+			result: {
+				item: 'minecraft:tipped_arrow',
+				count: 2
+			}
+		});
+	}
+}
+
+class SpecialSuspiciousstewRecipe extends ShapelessRecipe {
+	constructor() {
+		super({ingredients: null});
+	}
+
+	getIngredients() {
+		return new Set(Recipe.expandIngredientChoices({tag: 'minecraft:small_flowers'}).concat([
+			'minecraft:bowl', 'minecraft:red_mushroom', 'minecraft:brown_mushroom'
+		]));
+	}
+
+	getPossibleResults() {
+		return ['minecraft:suspicious_stew'];
+	}
+
+	getResult() {
+		if (this.checkExact())
+			return 'minecraft:suspicious_stew';
+		else
+			return null;
+	}
+
+	getResultCount() {
+		return 1;
+	}
+
+	checkExact() {
+		for (let singularIngredient of ['minecraft:bowl', 'minecraft:red_mushroom', 'minecraft:brown_mushroom']) {
+			if (craftingInputs.filter(e => e === singularIngredient).length !== 1)
+				return false;
+		}
+		if (craftingInputs.filter(e => Recipe.expandIngredientChoices({tag: 'minecraft:small_flowers'}).includes(e)).length !== 1)
+			return false;
+		return true;
+	}
+
+	score() {
+		const flower = craftingInputs.find(e => Recipe.expandIngredientChoices({tag: 'minecraft:small_flowers'}).includes(e));
+		this.data.ingredients = [
+			{item: 'minecraft:bowl'},
+			{item: 'minecraft:red_mushroom'},
+			{item: 'minecraft:brown_mushroom'},
+			{item: flower || 'minecraft:allium'}
+		];
 		return super.score();
 	}
 }

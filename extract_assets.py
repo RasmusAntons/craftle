@@ -85,12 +85,12 @@ icon_wiki_overrides = {
     'Weathered Copper': 'Weathered Copper Block',
     'Waxed Cut Copper Slab': 'Cut Copper Slab',
     'Waxed Cut Copper Stairs': 'Cut Copper Stairs',
-    'Waxed Exposed Cut Copper Slab': 'Cut Copper Slab',
-    'Waxed Exposed Cut Copper Stairs': 'Cut Copper Stairs',
-    'Waxed Oxidized Cut Copper Slab': 'Cut Copper Slab',
-    'Waxed Oxidized Cut Copper Stairs': 'Cut Copper Stairs',
-    'Waxed Weathered Cut Copper Slab': 'Cut Copper Slab',
-    'Waxed Weathered Cut Copper Stairs': 'Cut Copper Stairs',
+    'Waxed Exposed Cut Copper Slab': 'Exposed Cut Copper Slab',
+    'Waxed Exposed Cut Copper Stairs': 'Exposed Cut Copper Stairs',
+    'Waxed Oxidized Cut Copper Slab': 'Oxidized Cut Copper Slab',
+    'Waxed Oxidized Cut Copper Stairs': 'Oxidized Cut Copper Stairs',
+    'Waxed Weathered Cut Copper Slab': 'Weathered Cut Copper Slab',
+    'Waxed Weathered Cut Copper Stairs': 'Weathered Cut Copper Stairs',
 }
 
 max_stack_sizes = {
@@ -224,6 +224,8 @@ max_stack_sizes = {
     'minecraft:warped_sign': 16,
     'minecraft:jungle_sign': 16,
     'minecraft:written_book': 16,
+    'minecraft:lingering_potion': 1,
+    'minecraft:suspicious_stew': 1
 }
 
 dye_items = [
@@ -299,8 +301,25 @@ crafting_recipe_types = {
     'minecraft:crafting_special_shulkerboxcoloring': [
         {'tag': 'minecraft:shulker_boxes'},
         *dye_items
+    ],
+    'minecraft:crafting_special_tippedarrow': [
+        {'item': 'minecraft:arrow'},
+        {'item': 'minecraft:lingering_potion'},
+        {'item': 'minecraft:tipped_arrow'}
+    ],
+    'minecraft:crafting_special_suspiciousstew': [
+        {'item': 'minecraft:bowl'},
+        {'item': 'minecraft:brown_mushroom'},
+        {'item': 'minecraft:red_mushroom'},
+        {'tag': 'minecraft:small_flowers'},
+        {'item': 'minecraft:suspicious_stew'}
     ]
 }
+
+disabled_crafting_recipe_types = [
+    'minecraft:crafting_special_mapextending',
+    'minecraft:crafting_special_repairitem'
+]
 
 
 def is_texture_asset(s):
@@ -487,6 +506,8 @@ if __name__ == '__main__':
                 recipe_dict = json.loads(jar.read(zip_info.filename))
                 if recipe_dict['type'] in crafting_recipe_types:
                     recipes.append(recipe_dict)
+                elif recipe_dict['type'].startswith('minecraft:crafting') and recipe_dict['type'] not in disabled_crafting_recipe_types:
+                    print(f'Warning: {recipe_dict["type"]} not implemented')
             elif is_tag_json(zip_info.filename):
                 tags[pathlib.Path(zip_info.filename).stem] = json.loads(jar.read(zip_info.filename))
             elif is_lang_json(zip_info.filename):
