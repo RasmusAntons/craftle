@@ -54,6 +54,8 @@ class Recipe {
 				return new SpecialFireworkStarRecipe();
 			case 'minecraft:crafting_special_firework_star_fade':
 				return new SpecialFireworkStarFadeRecipe();
+			case 'minecraft:crafting_special_mapcloning':
+				return new SpecialMapcloningRecipe();
 			default:
 				throw `Invalid crafting recipe type: ${jsonData.type}`;
 		}
@@ -458,7 +460,7 @@ class SpecialBookcloningRecipe extends ShapelessRecipe {
 
 	score() {
 		this.data.ingredients = [{item: 'minecraft:written_book'}];
-		let dstBooks = Math.min(7, craftingInputs.filter(e => e ==='minecraft:writable_book').length);
+		let dstBooks = Math.min(7, Math.min(1, craftingInputs.filter(e => e ==='minecraft:writable_book').length));
 		this.data.ingredients.push(...(new Array(dstBooks).fill({item: 'minecraft:writable_book'})));
 		return super.score();
 	}
@@ -586,6 +588,53 @@ class SpecialFireworkStarFadeRecipe extends ShapelessRecipe {
 			this.data.ingredients.push(...dyes);
 		else
 			this.data.ingredients.push({item: 'minecraft:red_dye'});
+		return super.score();
+	}
+}
+
+class SpecialMapcloningRecipe extends ShapelessRecipe {
+	constructor() {
+		super({ingredients: null});
+	}
+
+	getIngredients() {
+		return new Set(['minecraft:filled_map', 'minecraft:map']);
+	}
+
+	getPossibleResults() {
+		return ['minecraft:filled_map'];
+	}
+
+	getResult() {
+		if (this.checkExact())
+			return 'minecraft:filled_map';
+		else
+			return null;
+	}
+
+	getResultCount() {
+		return craftingInputs.filter(e => e === 'minecraft:map').length + 1;
+	}
+
+	checkExact() {
+		let srcMaps = 0;
+		let dstMaps = 0;
+		for (let craftingInput of craftingInputs) {
+			if (craftingInput === 'minecraft:filled_map') {
+				++srcMaps;
+			} else if (craftingInput === 'minecraft:map') {
+				++dstMaps;
+			} else if (craftingInput !== null) {
+				return false;
+			}
+		}
+		return (srcMaps === 1 && dstMaps > 0);
+	}
+
+	score() {
+		this.data.ingredients = [{item: 'minecraft:filled_map'}];
+		let dstBooks = Math.min(8, Math.max(1, craftingInputs.filter(e => e ==='minecraft:map').length));
+		this.data.ingredients.push(...(new Array(dstBooks).fill({item: 'minecraft:map'})));
 		return super.score();
 	}
 }
