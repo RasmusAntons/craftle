@@ -182,6 +182,22 @@ max_stack_sizes = {
     'minecraft:netherite_leggings': 1,
     'minecraft:netherite_boots': 1,
     'minecraft:shulker_box': 1,
+    'minecraft:black_shulker_box': 1,
+    'minecraft:blue_shulker_box': 1,
+    'minecraft:brown_shulker_box': 1,
+    'minecraft:cyan_shulker_box': 1,
+    'minecraft:gray_shulker_box': 1,
+    'minecraft:green_shulker_box': 1,
+    'minecraft:light_blue_shulker_box': 1,
+    'minecraft:light_gray_shulker_box': 1,
+    'minecraft:lime_shulker_box': 1,
+    'minecraft:magenta_shulker_box': 1,
+    'minecraft:orange_shulker_box': 1,
+    'minecraft:pink_shulker_box': 1,
+    'minecraft:purple_shulker_box': 1,
+    'minecraft:red_shulker_box': 1,
+    'minecraft:white_shulker_box': 1,
+    'minecraft:yellow_shulker_box': 1,
     'minecraft:shield': 1,
     'minecraft:gray_banner': 16,
     'minecraft:brown_banner': 16,
@@ -207,7 +223,7 @@ max_stack_sizes = {
     'minecraft:oak_sign': 16,
     'minecraft:warped_sign': 16,
     'minecraft:jungle_sign': 16,
-    'minecraft:written_book': 16
+    'minecraft:written_book': 16,
 }
 
 dye_items = [
@@ -275,6 +291,14 @@ crafting_recipe_types = {
     'minecraft:crafting_special_mapcloning': [
         {'item': 'minecraft:map'},
         {'item': 'minecraft:filled_map'},
+    ],
+    'minecraft:crafting_special_shielddecoration': [
+        {'item': 'minecraft:shield'},
+        {'tag': 'minecraft:banners'}
+    ],
+    'minecraft:crafting_special_shulkerboxcoloring': [
+        {'tag': 'minecraft:shulker_boxes'},
+        *dye_items
     ]
 }
 
@@ -294,7 +318,7 @@ def is_recipe_json(s):
 
 
 def is_tag_json(s):
-    return s.startswith('data/minecraft/tags/items/') and s.endswith('.json')
+    return (s.startswith('data/minecraft/tags/items/') or s.startswith('data/minecraft/tags/blocks/')) and s.endswith('.json')
 
 
 def is_lang_json(s):

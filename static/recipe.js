@@ -56,6 +56,10 @@ class Recipe {
 				return new SpecialFireworkStarFadeRecipe();
 			case 'minecraft:crafting_special_mapcloning':
 				return new SpecialMapcloningRecipe();
+			case 'minecraft:crafting_special_shielddecoration':
+				return new SpecialShielddecorationRecipe();
+			case 'minecraft:crafting_special_shulkerboxcoloring':
+				return new SpecialShulkerboxcoloringRecipe();
 			default:
 				throw `Invalid crafting recipe type: ${jsonData.type}`;
 		}
@@ -635,6 +639,57 @@ class SpecialMapcloningRecipe extends ShapelessRecipe {
 		this.data.ingredients = [{item: 'minecraft:filled_map'}];
 		let dstBooks = Math.min(8, Math.max(1, craftingInputs.filter(e => e ==='minecraft:map').length));
 		this.data.ingredients.push(...(new Array(dstBooks).fill({item: 'minecraft:map'})));
+		return super.score();
+	}
+}
+
+class SpecialShielddecorationRecipe extends ShapelessRecipe {
+	constructor() {
+		super({
+			ingredients: [{item: 'minecraft:shield'}, {tag: 'minecraft:banners'}],
+			result: {item: 'minecraft:shield'}
+		});
+	}
+}
+
+class SpecialShulkerboxcoloringRecipe extends ShapelessRecipe {
+	constructor() {
+		super({ingredients: null});
+	}
+
+	getIngredients() {
+		return new Set(Recipe.dyes.concat(Recipe.expandIngredientChoices({tag: 'minecraft:shulker_boxes'})));
+	}
+
+	getPossibleResults() {
+		return Recipe.expandIngredientChoices({tag: 'minecraft:shulker_boxes'}).filter(e => e !== 'minecraft:shulker_box');
+	}
+
+	getResult() {
+		if (this.checkExact())
+			return craftingInputs.find(e => Recipe.dyes.includes(e)).replace('dye', 'shulker_box');
+		else
+			return null;
+	}
+
+	getResultCount() {
+		return 1;
+	}
+
+	checkExact() {
+		if (craftingInputs.filter(e => Recipe.dyes.includes(e)).length !== 1)
+			return false;
+		if (craftingInputs.filter(e => Recipe.expandIngredientChoices({tag: 'minecraft:shulker_boxes'}).includes(e)).length !== 1)
+			return false;
+		if (craftingInputs.filter(e => e === null).length !== 7)
+			return false;
+		return true;
+	}
+
+	score() {
+		const shulkerBox = craftingInputs.find(e => Recipe.expandIngredientChoices({tag: 'minecraft:shulker_boxes'}).includes(e));
+		const dye = targetItem.replace('shulker_box', 'dye');
+		this.data.ingredients = [{item: shulkerBox || 'minecraft:shulker_box'}, {item: dye || 'minecraft:red_dye'}];
 		return super.score();
 	}
 }
