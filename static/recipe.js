@@ -146,7 +146,7 @@ class ShapedRecipe extends Recipe {
 			}
 		}
 		for (let [inputSlot, craftingInput] of craftingInputs.entries()) {
-			if (expectedIngredients[inputSlot] === undefined)
+			if (resultColours[inputSlot] !== null)
 				continue;
 			let matchingIngredientIdx = -1;
 			for (let [ingredientIdx, expectedIngredientChoices] of expectedIngredients.entries()) {
