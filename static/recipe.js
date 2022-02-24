@@ -96,10 +96,13 @@ class ShapedRecipe extends Recipe {
 		return this.data.result.count || 1;
 	}
 
-	flatPattern(rowOffset, colOffset) {
+	flatPattern(rowOffset, colOffset, mirror) {
 		const res = new Array(9).fill(null);
 		for (let [rowNumber, row] of this.data.pattern.entries()) {
-			for (let [colNumber, key] of row.split('').entries()) {
+			const line = row.split('');
+			if (mirror)
+				line.reverse();
+			for (let [colNumber, key] of line.entries()) {
 				res[(rowNumber + rowOffset) * 3 + colNumber + colOffset] = (key !== ' ') ? key : null;
 			}
 		}
@@ -111,23 +114,25 @@ class ShapedRecipe extends Recipe {
 		let nCols = Math.max(...this.data.pattern.map(e => e.length));
 		for (let rowOffset = 0; rowOffset < (4 - nRows); ++rowOffset) {
 			for (let colOffset = 0; colOffset < (4 - nCols); ++colOffset) {
-				let correct = true;
-				const flatPattern = this.flatPattern(rowOffset, colOffset);
-				for (let i = 0; i < 9; ++i) {
-					if ((flatPattern[i] === null) !== (craftingInputs[i] === null)) {
-						correct = false;
-						break;
-					}
-					if (flatPattern[i] !== null) {
-						let ingredientChoices = this.data.key[flatPattern[i]];
-						if (!Recipe.expandIngredientChoices(ingredientChoices).includes(craftingInputs[i])) {
+				for (let mirror of [false, true]) {
+					let correct = true;
+					const flatPattern = this.flatPattern(rowOffset, colOffset, mirror);
+					for (let i = 0; i < 9; ++i) {
+						if ((flatPattern[i] === null) !== (craftingInputs[i] === null)) {
 							correct = false;
 							break;
 						}
+						if (flatPattern[i] !== null) {
+							let ingredientChoices = this.data.key[flatPattern[i]];
+							if (!Recipe.expandIngredientChoices(ingredientChoices).includes(craftingInputs[i])) {
+								correct = false;
+								break;
+							}
+						}
 					}
+					if (correct)
+						return true;
 				}
-				if (correct)
-					return true;
 			}
 		}
 		return false;
@@ -135,8 +140,8 @@ class ShapedRecipe extends Recipe {
 
 	// returns [score, colours]
 	// where score = 100 * green + 10 * yellow - 3 * rowOffset - collOffset
-	scoreAtOffset(rowOffset, colOffset) {
-		let expectedIngredients = this.flatPattern(rowOffset, colOffset).map(e =>
+	scoreAtOffset(rowOffset, colOffset, mirror) {
+		let expectedIngredients = this.flatPattern(rowOffset, colOffset, mirror).map(e =>
 			(e === null) ? null : Recipe.expandIngredientChoices(this.data.key[e]));
 		let resultColours = new Array(9).fill(null);
 		let score = -3 * rowOffset - colOffset;
@@ -179,7 +184,9 @@ class ShapedRecipe extends Recipe {
 		let nCols = Math.max(...this.data.pattern.map(e => e.length));
 		for (let rowOffset = 0; rowOffset < (4 - nRows); ++rowOffset) {
 			for (let colOffset = 0; colOffset < (4 - nCols); ++colOffset) {
-				scoredFeedbackOptions.push(this.scoreAtOffset(rowOffset, colOffset));
+				for (let mirror of [false, true]) {
+					scoredFeedbackOptions.push(this.scoreAtOffset(rowOffset, colOffset));
+				}
 			}
 		}
 		scoredFeedbackOptions.sort((a, b) => a[0] < b[0]);
