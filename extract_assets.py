@@ -266,6 +266,10 @@ crafting_recipe_types = {
         {'item': 'minecraft:fire_charge'},
         {'item': 'minecraft:diamond'},
         *dye_items
+    ],
+    'minecraft:crafting_special_firework_star_fade': [
+        {'item': 'minecraft:firework_star'},
+        *dye_items
     ]
 }
 

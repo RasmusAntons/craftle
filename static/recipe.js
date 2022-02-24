@@ -52,6 +52,8 @@ class Recipe {
 				return new SpecialBookcloningRecipe();
 			case 'minecraft:crafting_special_firework_star':
 				return new SpecialFireworkStarRecipe();
+			case 'minecraft:crafting_special_firework_star_fade':
+				return new SpecialFireworkStarFadeRecipe();
 			default:
 				throw `Invalid crafting recipe type: ${jsonData.type}`;
 		}
@@ -527,6 +529,59 @@ class SpecialFireworkStarRecipe extends ShapelessRecipe {
 			this.data.ingredients.push({item: extra});
 		const dyes = craftingInputs.filter(e => Recipe.dyes.includes(e)).map(e => ({item: e}));
 		dyes.splice(9 - this.data.ingredients.length);
+		if (dyes.length > 0)
+			this.data.ingredients.push(...dyes);
+		else
+			this.data.ingredients.push({item: 'minecraft:red_dye'});
+		return super.score();
+	}
+}
+
+class SpecialFireworkStarFadeRecipe extends ShapelessRecipe {
+	constructor() {
+		super({ingredients: null});
+	}
+
+	getIngredients() {
+		return new Set(Recipe.dyes.concat(SpecialFireworkStarRecipe.extraIngredients).concat([
+			'minecraft:firework_star'
+		]));
+	}
+
+	getPossibleResults() {
+		return ['minecraft:firework_star'];
+	}
+
+	getResult() {
+		if (this.checkExact())
+			return 'minecraft:firework_star';
+		else
+			return null;
+	}
+
+	getResultCount() {
+		return 1;
+	}
+
+	checkExact() {
+		let firework_star = 0;
+		let dyes = 0;
+		for (let craftingInput of craftingInputs) {
+			if (craftingInput === 'minecraft:firework_star') {
+				++firework_star;
+			} else if (Recipe.dyes.includes(craftingInput)) {
+				++dyes;
+			} else if (craftingInput !== null) {
+				return false;
+			}
+		}
+		return (firework_star === 1 && dyes > 0);
+	}
+
+	score() {
+		this.data.ingredients = [{item: 'minecraft:firework_star'}];
+		const dyes = craftingInputs.filter(e => Recipe.dyes.includes(e)).map(e => ({item: e}));
+		dyes.splice(8);
 		if (dyes.length > 0)
 			this.data.ingredients.push(...dyes);
 		else
