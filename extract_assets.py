@@ -206,7 +206,8 @@ max_stack_sizes = {
     'minecraft:crimson_sign': 16,
     'minecraft:oak_sign': 16,
     'minecraft:warped_sign': 16,
-    'minecraft:jungle_sign': 16
+    'minecraft:jungle_sign': 16,
+    'minecraft:written_book': 16
 }
 
 dye_items = [
