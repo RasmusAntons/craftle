@@ -23,7 +23,19 @@ function mulberry32(a) {
 	}
 }
 
+function resetGame() {
+	craftingInputs = new Array(9).fill(null);
+	attempts = 0;
+	setIngredientIcon(cursorItemDiv, null);
+	for (let ingredientInput of document.querySelectorAll('#crafting-input .ingredient'))
+		setIngredientIcon(ingredientInput, null);
+	updateCraftingOutput();
+}
+
 function initDaily() {
+	document.getElementById('start-daily').parentElement.classList.add('highlight');
+	document.getElementById('start-random').parentElement.classList.remove('highlight');
+	resetGame();
 	const today = new Date();
 	const dayNumber = (today.getFullYear() - 2000) * 365 + today.getMonth() * 12 + (today.getDate() - 1);
 	const rng = mulberry32(dayNumber);
@@ -32,6 +44,9 @@ function initDaily() {
 }
 
 function initRandom() {
+	resetGame();
+	document.getElementById('start-daily').parentElement.classList.remove('highlight');
+	document.getElementById('start-random').parentElement.classList.add('highlight');
 	targetItem = craftableItems[Math.floor(Math.random() * craftableItems.length)];
 	targetRecipes = recipes.filter(r => r.getPossibleResults().includes(targetItem));
 }
@@ -260,7 +275,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			for (let ingredient of recipe.getIngredients())
 				ingredients.add(ingredient);
 			for (let craftableItem of recipe.getPossibleResults()) {
-				ingredients.add(craftableItem); // TODO: remove, just for testing
 				craftableItems.add(craftableItem);
 			}
 		}
@@ -270,6 +284,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		initCraftingTable();
 		initDaily();
 		document.getElementById('start-random').addEventListener('click', initRandom);
+		document.getElementById('start-daily').addEventListener('click', initDaily);
+	});
+	document.getElementById('rules').addEventListener('click', () => {
+		const rulesPopupContainer = document.getElementById('rules-popup-container');
+		rulesPopupContainer.style.opacity = '1';
+		rulesPopupContainer.style.pointerEvents = 'all';
 	});
 	cursorItemDiv = document.getElementById('cursor-item');
 	document.addEventListener('mousemove', e => {
@@ -287,6 +307,9 @@ document.addEventListener('DOMContentLoaded', () => {
 				if (decrementStack(cursorItemDiv) === 0)
 					selectedIngredient = null;
 			}
+		} else if (e.button === 0 && e.target.classList.contains('popup-container')) {
+			e.target.style.opacity = '0';
+			e.target.style.pointerEvents = 'none';
 		}
 	});
 	document.addEventListener('contextmenu', e => {

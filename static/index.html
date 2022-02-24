@@ -129,6 +129,35 @@
 			<input id="searchbar" type="text" placeholder="Search">
 		</div>
 
+	<div id="rules-popup-container" class="popup-container">
+		<div id="rules-popup-window" class="popup-window">
+			<h3 class="popup-title">Rules</h3>
+			<p>
+				Each game, a craftable item is chosen as the target.
+				To win the game, that item must be crafted within 36 attempts.
+			</p>
+			<p>
+				The game provides feedback for each attempt.
+				The crafting output will be coloured in a way that a crafting recipe exists,
+				which produces the target item and uses all the green coloured ingredients in the same place
+				and uses all the yellow coloured ingredients in a different place compared to the attempt.
+			</p>
+			<p>
+				Be aware that there might be multiple recipes resulting in the target item.
+				Additionally, there might be multiple options to align the ingredients for a recipe.
+				The game will choose the recipe for the feedback that results in the most green inputs,
+				then the most yellow inputs and in case of a tie will prefer to put the recipe closer to the top left.
+			</p>
+			<p>
+				Any recipe that can be crafted in a crafting table in Minecraft 1.18.1 can be used, except for
+				the combination of two items for repair. Any item shown in the ingredient list can be used in at least one recipe.
+				We did not implement NBT tags, so recipes that rely on them will always accept the item.
+				For example, two red banners can be combined, even though in Minecraft the recipe requires one
+				patterned and one blank banner.
+			</p>
+		</div>
+	</div>
+
 	<div class="ingredient" id="cursor-item"><div class="stack"></div></div>
 	<template id="crafting-attempt-template">
 		<div class="crafting-attempt">

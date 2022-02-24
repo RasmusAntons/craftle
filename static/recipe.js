@@ -143,12 +143,12 @@ class ShapedRecipe extends Recipe {
 	}
 
 	// returns [score, colours]
-	// where score = 100 * green + 10 * yellow - 3 * rowOffset - collOffset
+	// where score = 100 * green + 10 * yellow + 9 - 3 * rowOffset - collOffset - mirrored
 	scoreAtOffset(rowOffset, colOffset, mirror) {
 		let expectedIngredients = this.flatPattern(rowOffset, colOffset, mirror).map(e =>
 			(e === null) ? null : Recipe.expandIngredientChoices(this.data.key[e]));
 		let resultColours = new Array(9).fill(null);
-		let score = -3 * rowOffset - colOffset;
+		let score = 9 - 3 * rowOffset - colOffset - Number(mirror);
 		for (let [inputSlot, craftingInput] of craftingInputs.entries()) {
 			const bothNull = craftingInput == null && expectedIngredients[inputSlot] == null;
 			const compatible = expectedIngredients[inputSlot] !== null && expectedIngredients[inputSlot].includes(craftingInput);
