@@ -286,11 +286,13 @@ document.addEventListener('DOMContentLoaded', () => {
 		document.getElementById('start-random').addEventListener('click', initRandom);
 		document.getElementById('start-daily').addEventListener('click', initDaily);
 	});
-	document.getElementById('rules').addEventListener('click', () => {
-		const rulesPopupContainer = document.getElementById('rules-popup-container');
-		rulesPopupContainer.style.opacity = '1';
-		rulesPopupContainer.style.pointerEvents = 'all';
-	});
+	for (let popupName of ['rules', 'stats']) {
+		document.getElementById(popupName).addEventListener('click', () => {
+			const rulesPopupContainer = document.getElementById(`${popupName}-popup-container`);
+			rulesPopupContainer.style.opacity = '1';
+			rulesPopupContainer.style.pointerEvents = 'all';
+		});
+	}
 	cursorItemDiv = document.getElementById('cursor-item');
 	document.addEventListener('mousemove', e => {
 		if (selectedIngredient) {
