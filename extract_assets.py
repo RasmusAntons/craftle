@@ -357,11 +357,11 @@ class WikiParser(html.parser.HTMLParser):
     def feed(self, data):
         super().feed(data)
         self.image_url = None
-        for image_url_candidate in self.image_url_candidates:
+        for direction in ['U', 'E', 'S']:
             if self.image_url is not None:
                 break
-            for direction in ['U', 'E', 'S']:
-                if f'({direction})' in image_url_candidate:
+            for image_url_candidate in self.image_url_candidates:
+                if f'%28{direction}%29' in image_url_candidate:
                     self.image_url = image_url_candidate
                     break
         if self.image_url is None and self.image_url_candidates:
@@ -373,7 +373,7 @@ class WikiParser(html.parser.HTMLParser):
             self.div_level = 0
         elif self.in_imagearea and tag == 'img':
             attr_dict = dict(attrs)
-            file_name_pattern = rf'{re.escape(self.block_name)}( \(floor\))?( \((UD|N|S|\d+)\))?( [JB]E\d+(-[a-z]\d)?)*.(?P<ext>png|gif)'
+            file_name_pattern = rf'{re.escape(self.block_name)}( \(floor\))?( \((UD|N|S|E|\d+)\))?( [JB]E\d+(-[a-z]\d)?)*.(?P<ext>png|gif)'
             m = re.match(file_name_pattern, attr_dict.get('alt'))
             if m:
                 self.image_ext = m.group('ext')
