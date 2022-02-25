@@ -24,12 +24,17 @@ function mulberry32(a) {
 }
 
 function resetGame() {
-	craftingInputs = new Array(9).fill(null);
 	attempts = 0;
+	craftingInputs = new Array(9).fill(null);
 	setIngredientIcon(cursorItemDiv, null);
 	for (let ingredientInput of document.querySelectorAll('#crafting-input .ingredient'))
 		setIngredientIcon(ingredientInput, null);
 	updateCraftingOutput();
+	for (let inventoryIngredient of document.querySelectorAll('.invslot .ingredient'))
+		setIngredientIcon(inventoryIngredient, null);
+	const attemptsDiv = document.getElementById('attempts');
+	while (attemptsDiv.firstChild)
+		attemptsDiv.removeChild(attemptsDiv.firstChild);
 }
 
 function initDaily() {
