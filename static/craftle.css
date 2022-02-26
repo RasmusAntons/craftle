@@ -60,20 +60,34 @@ body {
 	height: 36px;
 }
 
-#ingredients {
-	box-sizing: border-box;
-	flex-wrap: wrap;
-	position: fixed;
-	width: 427px;
+#ingredients-container {
 	height: 100vh;
-	overflow-y: scroll;
+	position: fixed;
+	right: 0;
+	top: 0;
 	scrollbar-width: none;
+	width: 100vw;
+	overflow-y: scroll;
+	pointer-events: none;
+}
+
+#ingredients-background {
+	position: absolute;
+	box-sizing: border-box;
+	width: 427px;
+	min-height: 100vh;
 	right: 0;
 	top: 0;
 	background-color: rgba(0, 0, 0, 0.3);
 	padding-left: 8px;
 	padding-top: 55px;
 	border-left: 1px solid rgba(255, 255, 255, 0.1);
+	pointer-events: all;
+}
+
+#ingredients {
+	display: flex;
+	flex-wrap: wrap;
 }
 
 .ingredient {
@@ -83,14 +97,39 @@ body {
 	width: 48px;
 	height: 48px;
 	display: inline-block;
+	position: relative;
 	background-size: 100%;
 	background-repeat: no-repeat;
 	background-position: bottom;
-	/* background-color: aqua; */
 }
 
 .ingredient:hover {
 	background-color: #9f9f9f;
+}
+
+.tooltip {
+	display: none;
+	position: absolute;
+	left: 100%;
+	top: 0;
+	padding: 4px;
+	pointer-events: none;
+	background: rgba(0,0,0,.9);
+	border: 2px solid #290560;
+	box-shadow: 0 0 0 2px #000;
+	border-radius: 2px;
+	z-index: 100;
+	color: white;
+	white-space: nowrap;
+	font-size: 16px;
+}
+.ingredient:hover .tooltip:not(:empty) {
+	display: block;
+	width: auto;
+}
+
+.ingredient div {
+	pointer-events: none;
 }
 
 .mc-button {
@@ -211,7 +250,7 @@ h1 {
 
 /* craft */
 
-#crafting-input, .crafting-attempt {
+#crafting-input {
 	float: left;
 	margin: 0px 10px 10px 10px;
 	background-repeat: no-repeat;
@@ -357,25 +396,39 @@ h1 {
 
 /* attempts */
 
-#attempts {
-	color: #fff !important;
-	box-sizing: border-box;
-	font-size: 28px;
+#attempts-container {
 	position: fixed;
-	width: 369px;
-	height: 100vh;
-	overflow-y: scroll;
 	scrollbar-width: none;
 	left: 0;
 	top: 0;
+	width: 100vw;
+	height: 100vh;
+	overflow-y: scroll;
+	pointer-events: none;
+}
+
+#attempts-background {
+	color: #fff !important;
+	box-sizing: border-box;
+	font-size: 28px;
+	width: 369px;
+	min-height: 100vh;
 	background-color: rgba(0, 0, 0, 0.3);
 	padding-left: 8px;
 	padding-top: 55px;
 	border-right: 1px solid rgba(255, 255, 255, 0.1);
+	pointer-events: all;
+}
+
+#attempts {
+	display: flex;
+	flex-wrap: wrap;
 }
 
 .crafting-attempt {
-	margin-top: 10px;
+	margin: 0px 10px 10px 10px;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
 }
 
 /* buttons */

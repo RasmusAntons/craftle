@@ -82,6 +82,10 @@ function initIngredients() {
 		const ingredientStack = document.createElement('div');
 		ingredientStack.classList.add('stack');
 		ingredientDiv.appendChild(ingredientStack);
+		const ingredientTooltip = document.createElement('div');
+		ingredientTooltip.classList.add('tooltip');
+		ingredientTooltip.textContent = 'Test';
+		ingredientDiv.appendChild(ingredientTooltip);
 		setIngredientIcon(ingredientDiv, ingredient);
 		ingredientDiv.dataset.id = ingredient;
 		ingredientDiv.dataset.name = items[ingredient].name;
@@ -187,6 +191,7 @@ function setIngredientIcon(ingredientDiv, itemId, stack) {
 	if (!itemId) {
 		ingredientDiv.style.backgroundImage = '';
 		ingredientDiv.title = '';
+		ingredientDiv.lastChild.textContent = '';
 		return;
 	}
 	if (!items[itemId]) {
@@ -198,7 +203,7 @@ function setIngredientIcon(ingredientDiv, itemId, stack) {
 		ingredientDiv.style.backgroundImage = 'url(' + items[itemId]['icon'] + ')';
 	else
 		ingredientDiv.style.backgroundImage = '';
-	ingredientDiv.title = items[itemId]['name'];
+	ingredientDiv.lastChild.textContent = items[itemId]['name'];
 }
 
 function incrementStack(ingredientDiv, maxStack, amount) {
@@ -240,7 +245,6 @@ function loadStats(lastGame, dailyStats) {
 		document.getElementById('stats-average').textContent = dailyStats.average.toFixed(2);
 	}
 	const statsCopy = document.getElementById('stats-copy');
-	console.log(lastGame);
 	if (lastGame && lastGame.craftleNumber !== null) {
 		statsCopy.style.display = 'block';
 		statsCopy.onclick = () => {
@@ -310,7 +314,8 @@ function handleCraftingAttempt() {
 	updateCraftingOutput();
 	const craftingAttemptsDiv = document.getElementById('attempts');
 	craftingAttemptsDiv.appendChild(craftingAttemptDiv);
-	craftingAttemptsDiv.scrollTop = craftingAttemptsDiv.scrollHeight;
+	const craftingAttemptsContainer = document.getElementById('attempts-container');
+	craftingAttemptsContainer.scrollTop = craftingAttemptsContainer.scrollHeight;
 }
 
 function updateCraftingOutput() {
@@ -390,6 +395,14 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (selectedIngredient) {
 			cursorItemDiv.style.left = `${e.clientX - 24}px`;
 			cursorItemDiv.style.top = `${e.clientY - 24}px`;
+		}
+		if (e.target.classList && e.target.classList.contains('ingredient')) {
+			e.target.lastChild.style.top = `${e.offsetY - 40}px`;
+			e.target.lastChild.style.left = `${e.offsetX + 20}px`;
+			const boundingRect = e.target.lastChild.getBoundingClientRect();
+			if (boundingRect.right > window.innerWidth) {
+				e.target.lastChild.style.left = `${e.offsetX - boundingRect.width - 20}px`;
+			}
 		}
 	});
 	document.addEventListener('mousedown', e => {
