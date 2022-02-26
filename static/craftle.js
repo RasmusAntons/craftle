@@ -43,7 +43,7 @@ function resetGame() {
 function initDaily() {
 	resetGame();
 	const today = new Date();
-	const dayZero = new Date(2022, 2, 1);
+	const dayZero = new Date(2022, 1, 26);
 	const timeSince = (today - dayZero) + ((dayZero.getTimezoneOffset() - today.getTimezoneOffset()) * 60 * 1000);
 	craftleNumber = Math.floor(timeSince / (1000 * 60 * 60 * 24));
 	document.getElementById('count').textContent = `#${craftleNumber}`;
