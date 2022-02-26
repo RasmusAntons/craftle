@@ -223,12 +223,14 @@ function decrementStack(ingredientDiv, amount) {
 function loadStats(lastGame, dailyStats) {
 	if (!lastGame)
 		lastGame = JSON.parse(localStorage.getItem('last-daily'));
+	let attemptsStr;
 	if (lastGame) {
 		const lastCraftleNumber = (lastGame.craftleNumber === null) ? 'random' : `#${lastGame.craftleNumber}`;
 		document.getElementById('stats-number').textContent = lastCraftleNumber;
 		setIngredientIcon(document.getElementById('stats-target'), lastGame.targetItem);
 		const lastAttempts = (lastGame.attempts === null) ? 'X' : lastGame.attempts;
-		document.getElementById('stats-attempts').textContent = `${lastAttempts}/${MAX_ATTEMPTS}`;
+		attemptsStr = `${lastAttempts}/${MAX_ATTEMPTS}`;
+		document.getElementById('stats-attempts').textContent = attemptsStr;
 	}
 	if (!dailyStats)
 		dailyStats = JSON.parse(localStorage.getItem('daily-stats'));
@@ -236,6 +238,20 @@ function loadStats(lastGame, dailyStats) {
 		document.getElementById('stats-played').textContent = dailyStats.played;
 		document.getElementById('stats-solved').textContent = dailyStats.solved;
 		document.getElementById('stats-average').textContent = dailyStats.average.toFixed(2);
+	}
+	const statsCopy = document.getElementById('stats-copy');
+	console.log(lastGame);
+	if (lastGame && lastGame.craftleNumber !== null) {
+		statsCopy.style.display = 'block';
+		statsCopy.onclick = () => {
+			const shareText = `Craftle #${lastGame.craftleNumber} ${attemptsStr}\nhttps://craftle.enigmatics.org`;
+			navigator.clipboard.writeText(shareText).then(() => {
+				statsCopy.firstElementChild.textContent = 'Copied';
+				setTimeout(() => statsCopy.firstElementChild.textContent = 'Copy', 2500);
+			});
+		};
+	} else {
+		statsCopy.style.display = 'none';
 	}
 }
 

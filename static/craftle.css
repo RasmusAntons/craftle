@@ -446,6 +446,11 @@ h1 {
 	scrollbar-width: none;
 }
 
+.popup-window .mc-button {
+	margin-top: 5px;
+	left: 0;
+}
+
 .popup-subsubtitle {
 	color: grey;
 }
