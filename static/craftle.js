@@ -267,7 +267,7 @@ function updateStats(success, open) {
 		possibleRecipes: targetRecipes
 	};
 	let dailyStats
-	if (craftleNumber) {
+	if (craftleNumber !== null) {
 		localStorage.setItem('last-daily', JSON.stringify(lastGame));
 		dailyStats = JSON.parse(localStorage.getItem('daily-stats')) || {played: 0, solved: 0, average: 0};
 		dailyStats.played += 1;
