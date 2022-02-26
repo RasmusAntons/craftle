@@ -12,6 +12,8 @@ let craftingOutputCount;
 let attempts;
 let cursorItemDiv;
 let loadingProgress = 0;
+let craftleNumber;
+let isGameActive = false;
 const MAX_ATTEMPTS = 36;
 
 function mulberry32(a) {
@@ -37,23 +39,37 @@ function resetGame() {
 		attemptsDiv.removeChild(attemptsDiv.firstChild);
 }
 
+
 function initDaily() {
-	document.getElementById('start-daily').parentElement.classList.add('highlight');
-	document.getElementById('start-random').parentElement.classList.remove('highlight');
 	resetGame();
 	const today = new Date();
+	const dayZero = new Date(2022, 2, 1);
+	const timeSince = (today - dayZero) + ((dayZero.getTimezoneOffset() - today.getTimezoneOffset()) * 60 * 1000);
+	craftleNumber = Math.floor(timeSince / (1000 * 60 * 60 * 24));
+	document.getElementById('count').textContent = `#${craftleNumber}`;
+	const lastGame = JSON.parse(localStorage.getItem('last-daily'));
 	const dayNumber = (today.getFullYear() - 2000) * 365 + today.getMonth() * 12 + (today.getDate() - 1);
 	const rng = mulberry32(dayNumber);
 	targetItem = craftableItems[Math.floor(rng() * craftableItems.length)];
 	targetRecipes = recipes.filter(r => r.getPossibleResults().includes(targetItem));
+	if (lastGame && lastGame.craftleNumber === craftleNumber) {
+		loadStats();
+		const rulesPopupContainer = document.getElementById('stats-popup-container');
+		rulesPopupContainer.style.opacity = '1';
+		rulesPopupContainer.style.pointerEvents = 'all';
+		isGameActive = false;
+	} else {
+		isGameActive = true;
+	}
 }
 
 function initRandom() {
 	resetGame();
-	document.getElementById('start-daily').parentElement.classList.remove('highlight');
-	document.getElementById('start-random').parentElement.classList.add('highlight');
+	craftleNumber = null;
+	document.getElementById('count').textContent = `random`;
 	targetItem = craftableItems[Math.floor(Math.random() * craftableItems.length)];
 	targetRecipes = recipes.filter(r => r.getPossibleResults().includes(targetItem));
+	isGameActive = true;
 }
 
 function initIngredients() {
@@ -204,14 +220,62 @@ function decrementStack(ingredientDiv, amount) {
 	return newStack;
 }
 
+function loadStats(lastGame, dailyStats) {
+	if (!lastGame)
+		lastGame = JSON.parse(localStorage.getItem('last-daily'));
+	if (lastGame) {
+		const lastCraftleNumber = (lastGame.craftleNumber === null) ? 'random' : `#${lastGame.craftleNumber}`;
+		document.getElementById('stats-number').textContent = lastCraftleNumber;
+		setIngredientIcon(document.getElementById('stats-target'), lastGame.targetItem);
+		const lastAttempts = (lastGame.attempts === null) ? 'X' : lastGame.attempts;
+		document.getElementById('stats-attempts').textContent = `${lastAttempts}/${MAX_ATTEMPTS}`;
+	}
+	if (!dailyStats)
+		dailyStats = JSON.parse(localStorage.getItem('daily-stats'));
+	if (dailyStats) {
+		document.getElementById('stats-played').textContent = dailyStats.played;
+		document.getElementById('stats-solved').textContent = dailyStats.solved;
+		document.getElementById('stats-average').textContent = dailyStats.average.toFixed(2);
+	}
+}
+
+function updateStats(success, open) {
+	const lastGame = {
+		craftleNumber: craftleNumber,
+		targetItem: targetItem,
+		attempts: success ? attempts : null,
+		possibleRecipes: targetRecipes
+	};
+	let dailyStats
+	if (craftleNumber) {
+		localStorage.setItem('last-daily', JSON.stringify(lastGame));
+		dailyStats = JSON.parse(localStorage.getItem('daily-stats')) || {played: 0, solved: 0, average: 0};
+		dailyStats.played += 1;
+		if (success)
+			dailyStats.solved += 1;
+		dailyStats.average = dailyStats.average * ((dailyStats.played - 1) / dailyStats.played) + attempts / dailyStats.played;
+		localStorage.setItem('daily-stats', JSON.stringify(dailyStats));
+	}
+	loadStats(lastGame, dailyStats);
+	if (open) {
+		const rulesPopupContainer = document.getElementById('stats-popup-container');
+		rulesPopupContainer.style.opacity = '1';
+		rulesPopupContainer.style.pointerEvents = 'all';
+	}
+}
+
 function handleCraftingAttempt() {
+	if (!isGameActive)
+		return;
 	const inventoryDiv = document.querySelectorAll('.invslot .ingredient')[attempts];
 	setIngredientIcon(inventoryDiv, craftingOutput, craftingOutputCount);
 	++attempts;
 	if (targetRecipes.some(r => r.getResult() === targetItem)) {
-		alert('success');
+		isGameActive = false;
+		updateStats(true, true);
 	} else if (attempts === MAX_ATTEMPTS) {
-		alert(`fail (the target item was ${items[targetItem].name})`);
+		isGameActive = false;
+		updateStats(false, true);
 		return;
 	}
 	const craftingFeedback = Recipe.getCraftingFeedback();
@@ -258,6 +322,12 @@ function updateLoadingProgress(complete) {
 		setTimeout(() => {
 			loadingOverlay.style.opacity = '0';
 			loadingOverlay.style.pointerEvents = 'none';
+			if (!localStorage.getItem('shown-rules')) {
+				const rulesPopupContainer = document.getElementById('rules-popup-container');
+				rulesPopupContainer.style.opacity = '1';
+				rulesPopupContainer.style.pointerEvents = 'all';
+				localStorage.setItem('shown-rules', 'true');
+			}
 		}, 1000);
 	} else {
 		++loadingProgress;
@@ -288,6 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		initIngredients();
 		initCraftingTable();
 		initDaily();
+		loadStats();
 		document.getElementById('start-random').addEventListener('click', initRandom);
 		document.getElementById('start-daily').addEventListener('click', initDaily);
 	});
