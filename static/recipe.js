@@ -29,7 +29,7 @@ class Recipe {
 		return scoredFeedbackOptions[0][1];
 	}
 
-	static dyes = [
+	dyes = [
 		'minecraft:red_dye', 'minecraft:green_dye', 'minecraft:purple_dye', 'minecraft:cyan_dye',
 		'minecraft:light_gray_dye', 'minecraft:gray_dye', 'minecraft:pink_dye', 'minecraft:lime_dye',
 		'minecraft:yellow_dye', 'minecraft:light_blue_dye',  'minecraft:magenta_dye', 'minecraft:orange_dye',
@@ -339,20 +339,20 @@ class SpecialArmordyeRecipe extends ShapelessRecipe {
 		super({ingredients: null});
 	}
 
-	static leatherArmor = ['minecraft:leather_helmet', 'minecraft:leather_chestplate', 'minecraft:leather_leggings',
-			'minecraft:leather_boots', 'minecraft:leather_horse_armor'];
+	leatherArmor = ['minecraft:leather_helmet', 'minecraft:leather_chestplate', 'minecraft:leather_leggings',
+		'minecraft:leather_boots', 'minecraft:leather_horse_armor'];
 
 	getIngredients() {
-		return new Set(Recipe.dyes.concat(SpecialArmordyeRecipe.leatherArmor));
+		return new Set(this.dyes.concat(this.leatherArmor));
 	}
 
 	getPossibleResults() {
-		return SpecialArmordyeRecipe.leatherArmor;
+		return this.leatherArmor;
 	}
 
 	getResult() {
 		if (this.checkExact())
-			return SpecialArmordyeRecipe.leatherArmor.find(item => craftingInputs.includes(item));
+			return this.leatherArmor.find(item => craftingInputs.includes(item));
 		else
 			return null;
 	}
@@ -365,9 +365,9 @@ class SpecialArmordyeRecipe extends ShapelessRecipe {
 		let dyedItem = null;
 		let dyes = 0;
 		for (let craftingInput of craftingInputs) {
-			if (SpecialArmordyeRecipe.leatherArmor.includes(craftingInput) && dyedItem === null) {
+			if (this.leatherArmor.includes(craftingInput) && dyedItem === null) {
 				dyedItem = craftingInput;
-			} else if (Recipe.dyes.includes(craftingInput)) {
+			} else if (this.dyes.includes(craftingInput)) {
 				++dyes;
 			} else if (craftingInput !== null) {
 				return false;
@@ -378,7 +378,7 @@ class SpecialArmordyeRecipe extends ShapelessRecipe {
 
 	score() {
 		this.data.ingredients = [{item: targetItem}];
-		const dyes = craftingInputs.filter(e => Recipe.dyes.includes(e)).map(e => ({item: e}));
+		const dyes = craftingInputs.filter(e => this.dyes.includes(e)).map(e => ({item: e}));
 		dyes.splice(8);
 		this.data.ingredients.push(...dyes);
 		return super.score();
@@ -486,12 +486,12 @@ class SpecialFireworkStarRecipe extends ShapelessRecipe {
 		super({ingredients: null});
 	}
 
-	static extraIngredients = ['minecraft:skeleton_skull', 'minecraft:wither_skeleton_skull',
-			'minecraft:player_head', 'minecraft:zombie_head', 'minecraft:creeper_head', 'minecraft:dragon_head',
-			'minecraft:fire_charge', 'minecraft:gold_nugget'];
+	extraIngredients = ['minecraft:skeleton_skull', 'minecraft:wither_skeleton_skull',
+		'minecraft:player_head', 'minecraft:zombie_head', 'minecraft:creeper_head', 'minecraft:dragon_head',
+		'minecraft:fire_charge', 'minecraft:gold_nugget'];
 
 	getIngredients() {
-		return new Set(Recipe.dyes.concat(SpecialFireworkStarRecipe.extraIngredients).concat([
+		return new Set(this.dyes.concat(this.extraIngredients).concat([
 			'minecraft:gunpowder', 'minecraft:feather', 'minecraft:glowstone_dust','minecraft:diamond'
 		]));
 	}
@@ -520,9 +520,9 @@ class SpecialFireworkStarRecipe extends ShapelessRecipe {
 		for (let craftingInput of craftingInputs) {
 			if (craftingInput === 'minecraft:gunpowder') {
 				++gunpowder;
-			} else if (Recipe.dyes.includes(craftingInput)) {
+			} else if (this.dyes.includes(craftingInput)) {
 				++dyes;
-			} else if (SpecialFireworkStarRecipe.extraIngredients.includes(craftingInput)) {
+			} else if (this.extraIngredients.includes(craftingInput)) {
 				++extra;
 			} else if (craftingInput === 'minecraft:diamond') {
 				++diamond;
@@ -541,10 +541,10 @@ class SpecialFireworkStarRecipe extends ShapelessRecipe {
 			this.data.ingredients.push({item: 'minecraft:diamond'});
 		if (craftingInputs.some(e => e === 'minecraft:glowstone'))
 			this.data.ingredients.push({item: 'minecraft:glowstone'});
-		const extra = craftingInputs.find(e => SpecialFireworkStarRecipe.extraIngredients.includes(e));
+		const extra = craftingInputs.find(e => this.extraIngredients.includes(e));
 		if (extra)
 			this.data.ingredients.push({item: extra});
-		const dyes = craftingInputs.filter(e => Recipe.dyes.includes(e)).map(e => ({item: e}));
+		const dyes = craftingInputs.filter(e => this.dyes.includes(e)).map(e => ({item: e}));
 		dyes.splice(9 - this.data.ingredients.length);
 		if (dyes.length > 0)
 			this.data.ingredients.push(...dyes);
@@ -560,7 +560,7 @@ class SpecialFireworkStarFadeRecipe extends ShapelessRecipe {
 	}
 
 	getIngredients() {
-		return new Set(Recipe.dyes.concat(SpecialFireworkStarRecipe.extraIngredients).concat([
+		return new Set(this.dyes.concat([
 			'minecraft:firework_star'
 		]));
 	}
@@ -586,7 +586,7 @@ class SpecialFireworkStarFadeRecipe extends ShapelessRecipe {
 		for (let craftingInput of craftingInputs) {
 			if (craftingInput === 'minecraft:firework_star') {
 				++firework_star;
-			} else if (Recipe.dyes.includes(craftingInput)) {
+			} else if (this.dyes.includes(craftingInput)) {
 				++dyes;
 			} else if (craftingInput !== null) {
 				return false;
@@ -597,7 +597,7 @@ class SpecialFireworkStarFadeRecipe extends ShapelessRecipe {
 
 	score() {
 		this.data.ingredients = [{item: 'minecraft:firework_star'}];
-		const dyes = craftingInputs.filter(e => Recipe.dyes.includes(e)).map(e => ({item: e}));
+		const dyes = craftingInputs.filter(e => this.dyes.includes(e)).map(e => ({item: e}));
 		dyes.splice(8);
 		if (dyes.length > 0)
 			this.data.ingredients.push(...dyes);
@@ -669,7 +669,7 @@ class SpecialShulkerboxcoloringRecipe extends ShapelessRecipe {
 	}
 
 	getIngredients() {
-		return new Set(Recipe.dyes.concat(Recipe.expandIngredientChoices({tag: 'minecraft:shulker_boxes'})));
+		return new Set(this.dyes.concat(Recipe.expandIngredientChoices({tag: 'minecraft:shulker_boxes'})));
 	}
 
 	getPossibleResults() {
@@ -678,7 +678,7 @@ class SpecialShulkerboxcoloringRecipe extends ShapelessRecipe {
 
 	getResult() {
 		if (this.checkExact())
-			return craftingInputs.find(e => Recipe.dyes.includes(e)).replace('dye', 'shulker_box');
+			return craftingInputs.find(e => this.dyes.includes(e)).replace('dye', 'shulker_box');
 		else
 			return null;
 	}
@@ -688,7 +688,7 @@ class SpecialShulkerboxcoloringRecipe extends ShapelessRecipe {
 	}
 
 	checkExact() {
-		if (craftingInputs.filter(e => Recipe.dyes.includes(e)).length !== 1)
+		if (craftingInputs.filter(e => this.dyes.includes(e)).length !== 1)
 			return false;
 		if (craftingInputs.filter(e => Recipe.expandIngredientChoices({tag: 'minecraft:shulker_boxes'}).includes(e)).length !== 1)
 			return false;
