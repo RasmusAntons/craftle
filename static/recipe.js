@@ -25,7 +25,7 @@ class Recipe {
 		const scoredFeedbackOptions = [];
 		for (let recipe of targetRecipes)
 			scoredFeedbackOptions.push(recipe.score());
-		scoredFeedbackOptions.sort((a, b) => a[0] < b[0]);
+		scoredFeedbackOptions.sort((a, b) => b[0] - a[0]);
 		return scoredFeedbackOptions[0][1];
 	}
 
