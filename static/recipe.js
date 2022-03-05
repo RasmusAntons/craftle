@@ -193,7 +193,7 @@ class ShapedRecipe extends Recipe {
 				}
 			}
 		}
-		scoredFeedbackOptions.sort((a, b) => a[0] < b[0]);
+		scoredFeedbackOptions.sort((a, b) => b[0] - a[0]);
 		return scoredFeedbackOptions[0];
 	}
 }
