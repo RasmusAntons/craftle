@@ -380,7 +380,10 @@ class SpecialArmordyeRecipe extends ShapelessRecipe {
 		this.data.ingredients = [{item: targetItem}];
 		const dyes = craftingInputs.filter(e => this.dyes.includes(e)).map(e => ({item: e}));
 		dyes.splice(8);
-		this.data.ingredients.push(...dyes);
+		if (dyes.length > 0)
+			this.data.ingredients.push(...dyes);
+		else
+			this.data.ingredients.push({item: 'minecraft:red_dye'});
 		return super.score();
 	}
 }
